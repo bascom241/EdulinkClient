@@ -16,6 +16,7 @@ import TeacherDashboard from "./pages/dashboard/teacher/TeacherDashboard";
 import StudentDashboard from "./pages/dashboard/student/StudentDashboard";
 import DashboardIndex from "./pages/dashboard";
 import MyClass from "./pages/dashboard/teacher/myClassrooms";
+import MyClassDetail from "./pages/dashboard/teacher/MyClassDetail";
 
 function App() {
   return (
@@ -30,13 +31,15 @@ function App() {
         <Route path="/veify-login" element={<VeryLogin />} />
         <Route path="/select" element={<Select />} />
         <Route path="/teacher-profile" element={<RegisterTeacherProfileForm />} />
+      
 
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<DashboardLayout />}>
             <Route index element={<DashboardIndex />} />
             <Route element={<RoleRoute allowedRoles={["ROLE_TEACHER"]} />}>
-              <Route path="/dashboard/teacher" element={<TeacherDashboard />} />
-              <Route path="/dashboard/teacher/classrooms" element={<MyClass/>}/>
+              <Route path="teacher" element={<TeacherDashboard />} />
+              <Route path="teacher/classrooms" element={<MyClass/>}/>
+              <Route path="teacher/:id" element={<MyClassDetail/>}/>
             </Route>
 
             <Route element={<RoleRoute allowedRoles={["ROLE_USER"]} />}>

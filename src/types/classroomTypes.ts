@@ -3,6 +3,18 @@ export interface getStudentNumbers {
 }
 
 
+export const ClassLocation = {
+  HYBRID: "hybrid",
+  PHYSICAL: "physical",
+  ONLINE: "onsite",
+} as const;
+
+export const ClassLevel = {
+  JUNIOR: "junior",
+  INTERMEDIATE: "intermediate",
+  EXPERT: "expert",
+} as const;
+
 // --- Types ---
 export interface Classroom {
   _id: string;
@@ -35,4 +47,8 @@ export interface CreateClassPayload {
   level: string;
   defaultLink?: string;
   otherLinks?: string[];
+}
+
+export interface CreateClassCategoryRequest {
+  title: string
 }

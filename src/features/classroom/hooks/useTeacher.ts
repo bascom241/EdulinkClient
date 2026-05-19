@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
-import { getStudentCounts,getClassCounts, getTeacherClassrooms , createClassroom} from "../api/teacher"
+import { getStudentCounts,getClassCounts, getTeacherClassrooms , createClassroom, getClassCategories} from "../api/teacher"
 import { classroomKeys } from "../classroomKeys"
 export const useGetStudentCount = () => {
     return useQuery({
@@ -27,7 +27,14 @@ export const useGetAllTeacherClassrooms = () => {
 
 export const useCreateClassroom = ()  => {
     return useMutation({
-        mutationFn:createClassroom,
-        
+        mutationFn:createClassroom, 
     })
 }
+
+export const useGetClassRoomCategory = () => {
+    return  useQuery({
+        queryKey: classroomKeys.classCategory(), 
+        queryFn:getClassCategories
+    })
+}
+

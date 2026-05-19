@@ -14,11 +14,15 @@ type InputProps = {
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   onPaste?: (e: React.ClipboardEvent<HTMLInputElement>) => void;
   maxLength?: number;
+  min?: string 
+  required?: boolean
+  readOnly?: any
+  step?: string 
 };
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
   (
-    { label, type = "text", placeholder, value, onChange, name, className, style, onKeyDown, onPaste, maxLength },
+    { label, type = "text", placeholder, value, onChange, name, className, style, onKeyDown, onPaste, maxLength , min, readOnly, required , step},
     ref: ForwardedRef<HTMLInputElement>
   ) => {
     return (
@@ -37,6 +41,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           maxLength={maxLength}
           className={className || "border border-gray-400 rounded-md px-4 py-3 outline-none focus:ring-2 focus:ring-[#3BAC51]"}
           style={style}
+          min={min}
+          required={required}
+          readOnly={readOnly}
+          step={step}
         />
       </div>
     );

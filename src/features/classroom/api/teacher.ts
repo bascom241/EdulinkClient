@@ -1,5 +1,5 @@
 import axiosInstance from "../../../api/axios";
-import type { Classroom } from "../../../types/classroomTypes";
+import type { Classroom, CreateClassCategoryRequest } from "../../../types/classroomTypes";
 import type{ CreateClassPayload } from "../../../types/classroomTypes";
 
 
@@ -26,3 +26,11 @@ export const createClassroom = async (data: CreateClassPayload) => {
   const res = await axiosInstance.post("/classroom/create-class", data);
   return res.data.data;
 };
+
+
+export const getClassCategories = async () => {
+  const res = await axiosInstance.get("/classroom/get-cats");
+  return res.data.data;
+}
+
+

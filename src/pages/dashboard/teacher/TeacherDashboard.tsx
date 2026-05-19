@@ -4,23 +4,55 @@ import RevenueChart from "./components/RevenueChart";
 import RecentActivity from "./components/RecentActivity";
 import EnrollmentChart from "./components/EnrollmentChart";
 import PerformanceMetrics from "./components/PerformanceMetrics";
-
+import { useGetTeacherProfile } from "../../../features/profile/hooks/useTeacherProfile";
 const TeacherDashboard = () => {
   // Demo teacher data
 
+  const {data, isLoading, error} = useGetTeacherProfile();
+console.log(data?.data);
 
+const apiData = data?.data;
 
-  const teacherData = {
-    fullName: "Dr. Sarah Johnson",
-    professionalTitle: "Senior Mathematics Instructor",
-    noOfStudentsEnrolled: 0,
-    noOfCoursesCompleted: 8,
-    noOfSessionCompleted: 156,
-    sctaPoints: 2840,
-    classroomCount: 4,
-    teacherBadge: "Gold Teacher",
-    studentReviewCount: 4.8,
-  };
+const teacherData = {
+  fullName: apiData?.fullName || "Unknown Teacher",
+
+  professionalTitle:
+    apiData?.professionalTitle || "Instructor",
+
+  shortBio:
+    apiData?.shortBio || "",
+
+  country:
+    apiData?.country || "",
+
+  coursesToTeach:
+    apiData?.coursesToTeach || [],
+
+  teachingExperience:
+    apiData?.teachingExperience || "Beginner",
+
+  // fallback stats so UI never breaks
+  noOfStudentsEnrolled:
+    apiData?.noOfStudentsEnrolled || 0,
+
+  noOfCoursesCompleted:
+    apiData?.noOfCoursesCompleted || 0,
+
+  noOfSessionCompleted:
+    apiData?.noOfSessionCompleted || 0,
+
+  sctaPoints:
+    apiData?.sctaPoints || 0,
+
+  classroomCount:
+    apiData?.classroomCount || 0,
+
+  teacherBadge:
+    apiData?.teacherBadge || "New Teacher",
+
+  studentReviewCount:
+    apiData?.studentReviewCount || 0,
+};
 
   return (
     <div className="p-6">
