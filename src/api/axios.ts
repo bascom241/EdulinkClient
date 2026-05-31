@@ -4,6 +4,7 @@ import axios from "axios";
 const localUrl = "http://localhost:3000/api/v1"
 console.log(localUrl)
 const deployedUrl = "https://edlinkserver.onrender.com/api/v1"
+console.log(deployedUrl)
 const axiosInstance = axios.create({
   baseURL:localUrl
 });

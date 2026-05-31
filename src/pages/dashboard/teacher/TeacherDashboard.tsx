@@ -8,7 +8,7 @@ import { useGetTeacherProfile } from "../../../features/profile/hooks/useTeacher
 const TeacherDashboard = () => {
   // Demo teacher data
 
-  const {data, isLoading, error} = useGetTeacherProfile();
+  const {data} = useGetTeacherProfile();
 console.log(data?.data);
 
 const apiData = data?.data;

@@ -2,7 +2,7 @@ import React from 'react'
 import { LogOut, Menu, X } from 'lucide-react'
 import { useAuthStore } from '../features/auth/store'
 import { useNavigate } from 'react-router-dom'
-import Button from './ui/Button'
+import Button from '../components/ui/Button'
 
 const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, logout } = useAuthStore()
@@ -40,7 +40,7 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
           <div className="flex items-center gap-4">
             <span className="text-sm text-neutral-600">{user?.name}</span>
             <Button
-              variant="ghost"
+             
               size="sm"
               icon={<LogOut className="w-4 h-4" />}
               onClick={handleLogout}

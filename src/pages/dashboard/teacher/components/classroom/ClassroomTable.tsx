@@ -9,7 +9,7 @@ type Props = {
 };
 
 const ClassroomTable = ({ classrooms, onSelect, onCreateTimeTable }: Props) => {
-  const [isTimeTableOpen, setIsTimeTableOpen] = useState(false);
+  
   const [mobileMenuOpen, setMobileMenuOpen] = useState<string | null>(null);
 
   // Function to get student capacity color

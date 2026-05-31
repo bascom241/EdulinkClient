@@ -32,9 +32,10 @@ export interface Classroom {
   classLevel: string;
   location: string;
   isFull: boolean;
+  startDate: string 
   createdAt: string;
   updatedAt: string 
-    defaultLink?: string;
+  defaultLink?: string ;
   otherLinks?: string[];
 }
 

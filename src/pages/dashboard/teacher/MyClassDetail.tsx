@@ -4,8 +4,7 @@ import { useState, useEffect } from "react";
 import { useGetSingleClass } from "../../../features/classroom/hooks/useTeacher";
 import { useGetAllSessionForTeachers } from "../../../features/session/hooks/useTeacher";
 import {
-  LineChart,
-  Line,
+
   BarChart,
   Bar,
   XAxis,
@@ -37,6 +36,7 @@ const MyClassDetail = () => {
     error: sessionsError 
   } = useGetAllSessionForTeachers(classId as string);
 
+  console.log(sessionsError)
   useEffect(() => {
     console.log("Sessions Response:", sessionsResponse);
     console.log("Class Data:", classData);
@@ -243,17 +243,7 @@ const MyClassDetail = () => {
             <h1 className="text-lg font-semibold text-gray-800 tracking-tight">
               {classData.name}
             </h1>
-            <div className="flex items-center gap-2 text-xs text-gray-400">
-              <span className="flex items-center gap-1">
-                <i className="far fa-folder-open text-[10px]"></i>
-                {classData.category?.name || "Class"}
-              </span>
-              <span>•</span>
-              <span className="flex items-center gap-1">
-                <i className="far fa-calendar text-[10px]"></i>
-                {formatDate(classData.startDate)}
-              </span>
-            </div>
+          
           </div>
         </div>
       </div>
@@ -268,18 +258,7 @@ const MyClassDetail = () => {
           </div>
         )}
         
-        {/* Teacher Card */}
-        <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-full border border-gray-100">
-          <div className="w-6 h-6 bg-green-100 rounded-lg flex items-center justify-center">
-            <span className="text-green-600 font-medium text-xs">
-              {classData.owner?.name?.charAt(0) || classData.owner?.charAt(0) || 'T'}
-            </span>
-          </div>
-          <span className="text-xs text-gray-600 hidden sm:inline">
-            {classData.owner?.name?.split(' ')[0] || "Teacher"}
-          </span>
-          <i className="fas fa-chevron-down text-[10px] text-gray-400"></i>
-        </div>
+        
       </div>
     </div>
   </div>
@@ -425,7 +404,7 @@ const MyClassDetail = () => {
                   outerRadius={100}
                   paddingAngle={5}
                   dataKey="value"
-                  label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
+                  label={({ name, percent = 0 }) => `${name} (${(percent * 100).toFixed(0)}%)`}
                   labelLine={{ stroke: '#9CA3AF', strokeWidth: 1 }}
                 >
                   {studentProgressData.map((entry, index) => (
@@ -726,8 +705,10 @@ const MyClassDetail = () => {
                         </div>
                       </div>
                       <button 
-                        onClick={() => navigator.clipboard.writeText(classData.defaultLink)}
+                        onClick={() => classData.defaultLink && navigator.clipboard.writeText(classData.defaultLink)}
                         className="px-4 py-2 text-green-600 border border-green-200 rounded-xl hover:bg-green-50 transition-all text-sm flex items-center gap-2"
+                        disabled={!classData.defaultLink}
+                        aria-disabled={!classData.defaultLink}
                       >
                         <i className="far fa-copy"></i>
                         Copy

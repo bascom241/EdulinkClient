@@ -1,5 +1,5 @@
 import axiosInstance from "../../../api/axios";
-import type { Classroom, CreateClassCategoryRequest } from "../../../types/classroomTypes";
+import type { Classroom } from "../../../types/classroomTypes";
 import type{ CreateClassPayload } from "../../../types/classroomTypes";
 
 

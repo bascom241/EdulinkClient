@@ -1,5 +1,5 @@
 import { Fragment } from "react/jsx-runtime"
-import { Dialog, Transition, TransitionChild } from "@headlessui/react"
+import { Dialog, Transition } from "@headlessui/react"
 
 
 
@@ -14,9 +14,7 @@ const CreateTimeTable = (
     {
         isOpen,
         onClose,
-        formData,
-        handleInputChange,
-        handleSubmit
+      
     }: Props
 ) => {
     return (

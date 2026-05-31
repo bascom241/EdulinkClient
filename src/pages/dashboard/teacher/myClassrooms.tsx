@@ -27,6 +27,8 @@ const MyClass = () => {
   const [selectedClass, setSelectedClass] =
     useState<Classroom | null>(null);
 
+    console.log(selectedClass)
+
   const [searchQuery, setSearchQuery] =
     useState("");
 
@@ -130,12 +132,7 @@ const MyClass = () => {
   // -----------------------------------
   // FILTER CLASSROOMS
   // -----------------------------------
-  const filteredClassrooms =
-    classrooms.filter((cls: Classroom) =>
-      cls.name
-        ?.toLowerCase()
-        .includes(searchQuery.toLowerCase())
-    );
+
 
   // -----------------------------------
   // LOADING
@@ -178,7 +175,7 @@ const MyClass = () => {
 
       {/* TABLE */}
       <ClassroomTable
-        classrooms={filteredClassrooms}
+        classrooms={classrooms}
         onSelect={setSelectedClass}
         onCreateTimeTable={()=>setIsTimeTableOpen(true)}
       />

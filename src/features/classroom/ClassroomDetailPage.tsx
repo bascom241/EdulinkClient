@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams} from 'react-router-dom'
 import { Users, BookOpen, Share2, Settings, Upload, Calendar } from 'lucide-react'
 import Button from '../../components/ui/Button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/Card'
@@ -10,7 +10,7 @@ import Alert from '../../components/ui/Alert'
 
 const ClassroomDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>()
-  const navigate = useNavigate()
+
   const [isShareModalOpen, setIsShareModalOpen] = useState(false)
   const [shareLink, setShareLink] = useState('')
 

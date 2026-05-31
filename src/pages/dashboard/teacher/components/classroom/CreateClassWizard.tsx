@@ -15,6 +15,7 @@ import { ClassLevel, ClassLocation } from "../../../../../types/classroomTypes";
 import MapPicker from "./MapPicker";
 import { useGetClassRoomCategory } from "../../../../../features/classroom/hooks/useTeacher";
 
+
 type Props = {
     isOpen: boolean;
     onClose: () => void;
@@ -38,7 +39,8 @@ const CreateClassWizard = ({
 }: Props) => {
     const [step, setStep] = useState(1);
     const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number } | null>(null);
-    const { data, isPending: fetchingClassCat } = useGetClassRoomCategory()
+    const { data, isPending: fetchingClassCat } = useGetClassRoomCategory();
+    console.log(fetchingClassCat)
     console.log(data)
     const totalSteps = 3;
 
