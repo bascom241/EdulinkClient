@@ -1,9 +1,9 @@
 import React from 'react'
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { TrendingUp, Users, BookOpen, Calendar } from 'lucide-react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/Card'
-import Badge from '../../components/ui/Badge'
-import { useAuthStore } from '../auth/store'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/Card'
+import Badge from '../components/ui/Badge'
+import { useAuthStore } from './auth/store'
 
 const Dashboard: React.FC = () => {
   const { user } = useAuthStore()
@@ -27,7 +27,9 @@ const Dashboard: React.FC = () => {
           Welcome back, {user?.name}! 👋
         </h1>
         <p className="text-neutral-600 mt-2">
-          {user?.role === 'ROLE_TEACHER' ? 'Here's your teaching overview' : 'Here's your learning overview'}
+        {user?.role === 'ROLE_TEACHER'
+  ? "Here's your teaching overview"
+  : "Here's your learning overview"}
         </p>
       </div>
 

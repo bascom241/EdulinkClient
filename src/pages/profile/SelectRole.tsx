@@ -3,6 +3,7 @@ import { useAuthStore } from "../../features/auth/store/useAuthStore";
 import type { UpdateRole } from "../../types/userType";
 import { useNavigate } from "react-router-dom";
 import { showCustomToast } from "../../utils/toast";
+import toast from "react-hot-toast";
 
 const Select = () => {
   const { role, setRole } = useAuthStore();
@@ -27,9 +28,10 @@ const Select = () => {
 
         // redirect after success
         if (role === "ROLE_USER") {
-          navigate("/student-profile");
+          localStorage.setItem("role", role)
+          navigate("/dashboard/student");
         } else {
-          navigate("/teacher-profile");
+          toast.error("Failed to load the student dashboard")
         }
       },
       onError: (error: any) => {

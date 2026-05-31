@@ -10,7 +10,7 @@ interface TeacherStatsProps {
   teacherData: any;
 }
 
-import { useGetClassCounts, useGetStudentCount } from "../../../../features/classroom/hooks/useTeacher";
+import { useGetClassCounts, useGetStudentCount } from "../../../../../features/classroom/hooks/useTeacher";
 
 const TeacherStats = ({ teacherData }: TeacherStatsProps) => {
 // 1. Fetch Student Count

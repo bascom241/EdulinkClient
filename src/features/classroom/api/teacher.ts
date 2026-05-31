@@ -22,6 +22,8 @@ export const getTeacherClassrooms = async (): Promise<Classroom[]> => {
 };
 
 
+
+
 export const createClassroom = async (data: CreateClassPayload) => {
   const res = await axiosInstance.post("/classroom/create-class", data);
   return res.data.data;
@@ -32,5 +34,12 @@ export const getClassCategories = async () => {
   const res = await axiosInstance.get("/classroom/get-cats");
   return res.data.data;
 }
+
+export const getSingleClassroom = async (classId: string): Promise<Classroom> => {
+  const res = await axiosInstance.get(`/classroom/get-single-class/${classId}`);
+  return res.data.data;
+}
+
+
 
 

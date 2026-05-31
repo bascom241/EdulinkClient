@@ -45,7 +45,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       {/* Logo Section */}
       <div className="px-6 pt-6 pb-4">
         <h1 className="text-2xl font-bold text-green-600">Edulink</h1>
-        <p className="text-xs text-gray-400 mt-1">BUY PLAN TO LEARN</p>
+        <p className="text-xs text-gray-400 mt-1">BEST PLACE TO LEARN</p>
       </div>
 
       {/* Menu Label */}

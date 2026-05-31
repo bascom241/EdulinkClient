@@ -144,7 +144,7 @@ const ClassroomDetailPage: React.FC = () => {
             <div className="text-center py-12">
               <BookOpen className="w-12 h-12 text-neutral-300 mx-auto mb-4" />
               <p className="text-neutral-600">No resources uploaded yet</p>
-              <Button variant="ghost" size="sm" className="mt-4">
+              <Button  size="sm" className="mt-4">
                 Add Resource
               </Button>
             </div>
@@ -162,7 +162,7 @@ const ClassroomDetailPage: React.FC = () => {
           <CardContent>
             <div className="text-center py-8">
               <p className="text-neutral-600 text-sm">No sessions scheduled</p>
-              <Button variant="ghost" size="sm" className="mt-4">
+              <Button  size="sm" className="mt-4">
                 Add Session
               </Button>
             </div>
@@ -180,7 +180,7 @@ const ClassroomDetailPage: React.FC = () => {
         footer={
           <>
             <Button
-              variant="ghost"
+              
               size="md"
               onClick={() => setIsShareModalOpen(false)}
             >

@@ -1,22 +1,15 @@
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-
 import type { Classroom } from "../../../types/classroomTypes";
-
 import { useClassroomForm } from "../../../features/classroom/hooks/useClassroomForm";
-
 import {
   useCreateClassroom,
   useGetAllTeacherClassrooms,
 } from "../../../features/classroom/hooks/useTeacher";
-
 import { classroomKeys } from "../../../features/classroom/classroomKeys";
-
 import ClassroomTable from "./components/classroom/ClassroomTable";
-import ClassroomDrawer from "./components/classroom/ClassroomDrawer";
 import ClassroomActionBar from "./components/classroom/ClassroomActionBar";
-
 import ClassHeader from "./components/classroom/ClassHeader";
 import CreateClassWizard from "./components/classroom/CreateClassWizard";
 import CreateTimeTable from "./components/classroom/CreateTimeTable";
@@ -201,13 +194,7 @@ const MyClass = () => {
         handleOtherLinkChange={handleOtherLinkChange}
         addNewLink={addNewLink}
       />
-      {/* DRAWER */}
-      <ClassroomDrawer
-        classroom={selectedClass}
-        onClose={() =>
-          setSelectedClass(null)
-        }
-      />
+      
 
       <CreateTimeTable
         isOpen={isTimeTableOpen}

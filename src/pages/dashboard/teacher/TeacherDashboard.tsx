@@ -1,9 +1,9 @@
 
-import TeacherStats from "./components/TeacherStats";
-import RevenueChart from "./components/RevenueChart";
-import RecentActivity from "./components/RecentActivity";
-import EnrollmentChart from "./components/EnrollmentChart";
-import PerformanceMetrics from "./components/PerformanceMetrics";
+import TeacherStats from "./components/dashboard/TeacherStats";
+import RevenueChart from "./components/dashboard/RevenueChart";
+import RecentActivity from "./components/dashboard/RecentActivity";
+import EnrollmentChart from "./components/dashboard/EnrollmentChart";
+import PerformanceMetrics from "./components/dashboard/PerformanceMetrics";
 import { useGetTeacherProfile } from "../../../features/profile/hooks/useTeacherProfile";
 const TeacherDashboard = () => {
   // Demo teacher data

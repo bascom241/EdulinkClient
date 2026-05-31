@@ -31,6 +31,7 @@ function App() {
         <Route path="/veify-login" element={<VeryLogin />} />
         <Route path="/select" element={<Select />} />
         <Route path="/teacher-profile" element={<RegisterTeacherProfileForm />} />
+        
       
 
         <Route element={<ProtectedRoute />}>
@@ -39,7 +40,7 @@ function App() {
             <Route element={<RoleRoute allowedRoles={["ROLE_TEACHER"]} />}>
               <Route path="teacher" element={<TeacherDashboard />} />
               <Route path="teacher/classrooms" element={<MyClass/>}/>
-              <Route path="teacher/:id" element={<MyClassDetail/>}/>
+              <Route path="teacher/:classId" element={<MyClassDetail/>}/>
             </Route>
 
             <Route element={<RoleRoute allowedRoles={["ROLE_USER"]} />}>

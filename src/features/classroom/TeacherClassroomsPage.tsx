@@ -27,8 +27,8 @@ const TeacherClassroomsPage: React.FC = () => {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleCreateClassroom = (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleCreateClassroom = (e?: React.FormEvent | React.MouseEvent) => {
+    e?.preventDefault()
     if (!validateForm()) return
 
     createClassroomMutation.mutate(formData, {
@@ -144,7 +144,7 @@ const TeacherClassroomsPage: React.FC = () => {
         footer={
           <>
             <Button
-              variant="ghost"
+        
               size="md"
               onClick={() => setIsCreateModalOpen(false)}
             >
@@ -154,7 +154,7 @@ const TeacherClassroomsPage: React.FC = () => {
               variant="primary"
               size="md"
               isLoading={createClassroomMutation.isPending}
-              onClick={handleCreateClassroom}
+              onClick={() => handleCreateClassroom()}
             >
               Create
             </Button>

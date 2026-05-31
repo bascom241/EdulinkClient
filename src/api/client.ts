@@ -1,4 +1,5 @@
-import axios, { AxiosError, AxiosInstance } from 'axios'
+import type{ AxiosInstance } from 'axios'
+import axios, { AxiosError } from 'axios'
 import { useAuthStore } from '../features/auth/store'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'

@@ -33,6 +33,9 @@ export interface Classroom {
   location: string;
   isFull: boolean;
   createdAt: string;
+  updatedAt: string 
+    defaultLink?: string;
+  otherLinks?: string[];
 }
 
 export interface CreateClassPayload {
