@@ -22,10 +22,10 @@ const BottomTabBar: React.FC<BottomTabBarProps> = ({
       return activePath === '/dashboard';
     }
     if (tab.path === '/dashboard/teacher') {
-      return activePath.startsWith('/dashboard/teacher');
+      return activePath === '/dashboard/teacher' || activePath === '/dashboard/teacher/';
     }
     if (tab.path === '/dashboard/student') {
-      return activePath.startsWith('/dashboard/student');
+      return activePath === '/dashboard/student' || activePath === '/dashboard/student/';
     }
     return activePath === tab.path;
   };

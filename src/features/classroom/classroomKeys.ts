@@ -13,5 +13,7 @@ export const classroomKeys = {
   classroomCount: () => [...classroomKeys.all, "class-counts"],
 
   teacherClassrooms: () => [...classroomKeys.all, "teacher-classrooms"],
-  classCategory: () => [...classroomKeys.all, "class-category"]
+  classCategory: () => [...classroomKeys.all, "class-category"],
+  timetable: (classId: string) => [...classroomKeys.all, "timetable", classId],
+  classStudents: (classId: string) => [...classroomKeys.all, "students", classId],
 };

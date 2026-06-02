@@ -8,44 +8,36 @@ import {
 
 interface TeacherStatsProps {
   teacherData: any;
+  summaryStats?: any;
 }
 
-import { useGetClassCounts, useGetStudentCount } from "../../../../../features/classroom/hooks/useTeacher";
-
-const TeacherStats = ({ teacherData }: TeacherStatsProps) => {
-// 1. Fetch Student Count
-  const { data: studentData } = useGetStudentCount();
-
-  // 2. Fetch Class Count (Corrected hook call)
-  const { data: classData } = useGetClassCounts();
-  console.log(studentData);
-  console.log(classData)
+const TeacherStats = ({ teacherData, summaryStats }: TeacherStatsProps) => {
   const stats = [
     {
       title: "Total Students",
-    value: studentData?.data ?? 0,
-      change: "+12%",
+      value: summaryStats?.students ?? 0,
+      change: "Live",
       icon: HiOutlineUsers,
       color: "bg-blue-50 text-blue-600"
     },
     {
       title: "Active Classes",
-      value: classData?.data ?? 0,
-      change: "+2",
+      value: summaryStats?.classes ?? teacherData.classroomCount ?? 0,
+      change: "Server",
       icon: HiOutlineBookOpen,
       color: "bg-green-50 text-[#3BAC51]"
     },
     {
       title: "SCTA Points",
       value: teacherData.sctaPoints,
-      change: "+450",
+      change: "Tracked",
       icon: HiOutlineStar,
       color: "bg-yellow-50 text-yellow-600"
     },
     {
       title: "Sessions Completed",
-      value: teacherData.noOfSessionCompleted,
-      change: "+12",
+      value: summaryStats?.completedSessions ?? 0,
+      change: `${summaryStats?.ongoingSessions ?? 0} live`,
       icon: HiOutlineChartBar,
       color: "bg-purple-50 text-purple-600"
     }

@@ -1,84 +1,66 @@
-
 import TeacherStats from "./components/dashboard/TeacherStats";
 import RevenueChart from "./components/dashboard/RevenueChart";
 import RecentActivity from "./components/dashboard/RecentActivity";
 import EnrollmentChart from "./components/dashboard/EnrollmentChart";
 import PerformanceMetrics from "./components/dashboard/PerformanceMetrics";
 import { useGetTeacherProfile } from "../../../features/profile/hooks/useTeacherProfile";
+import { useDashboardSummary } from "../../../features/workspace/hooks/useWorkspace";
+import Loader from "../../../components/ui/Loader";
+
 const TeacherDashboard = () => {
-  // Demo teacher data
+  const { data } = useGetTeacherProfile();
+  const { data: summary, isLoading } = useDashboardSummary();
+  const apiData = data?.data;
+  const summaryStats = summary?.stats || {};
 
-  const {data} = useGetTeacherProfile();
-console.log(data?.data);
+  const teacherData = {
+    fullName: apiData?.fullName || "Teacher",
+    professionalTitle: apiData?.professionalTitle || "Instructor",
+    shortBio: apiData?.shortBio || "",
+    country: apiData?.country || "",
+    coursesToTeach: apiData?.coursesToTeach || [],
+    teachingExperience: apiData?.teachingExperience || "Beginner",
+    noOfStudentsEnrolled: summaryStats.students || 0,
+    noOfCoursesCompleted: summaryStats.classes || 0,
+    noOfSessionCompleted: summaryStats.completedSessions || 0,
+    sctaPoints: apiData?.sctaPoints || 0,
+    classroomCount: summaryStats.classes || apiData?.classroomCount || 0,
+    teacherBadge: apiData?.teacherBadge || "New Teacher",
+    studentReviewCount: summaryStats.averageGrade || 0,
+  };
 
-const apiData = data?.data;
-
-const teacherData = {
-  fullName: apiData?.fullName || "Unknown Teacher",
-
-  professionalTitle:
-    apiData?.professionalTitle || "Instructor",
-
-  shortBio:
-    apiData?.shortBio || "",
-
-  country:
-    apiData?.country || "",
-
-  coursesToTeach:
-    apiData?.coursesToTeach || [],
-
-  teachingExperience:
-    apiData?.teachingExperience || "Beginner",
-
-  // fallback stats so UI never breaks
-  noOfStudentsEnrolled:
-    apiData?.noOfStudentsEnrolled || 0,
-
-  noOfCoursesCompleted:
-    apiData?.noOfCoursesCompleted || 0,
-
-  noOfSessionCompleted:
-    apiData?.noOfSessionCompleted || 0,
-
-  sctaPoints:
-    apiData?.sctaPoints || 0,
-
-  classroomCount:
-    apiData?.classroomCount || 0,
-
-  teacherBadge:
-    apiData?.teacherBadge || "New Teacher",
-
-  studentReviewCount:
-    apiData?.studentReviewCount || 0,
-};
+  if (isLoading) {
+    return (
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <Loader size="lg" message="Loading dashboard data..." />
+      </div>
+    );
+  }
 
   return (
     <div className="p-6">
-      {/* Welcome Header */}
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-800">
           Welcome back, {teacherData.fullName}!
         </h1>
-        <p className="text-gray-500 mt-1">
-          {teacherData.professionalTitle} • Here's what's happening with your teaching journey
+        <p className="mt-1 text-gray-500">
+          {teacherData.professionalTitle} - live data from your classes, sessions, and attendance.
         </p>
       </div>
 
-      {/* Stats Cards */}
-      <TeacherStats teacherData={teacherData} />
+      <TeacherStats teacherData={teacherData} summaryStats={summaryStats} />
 
-      {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-        <RevenueChart />
-        <EnrollmentChart />
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <RevenueChart data={summary?.charts?.revenue || []} />
+        <EnrollmentChart data={summary?.charts?.enrollment || []} />
       </div>
 
-      {/* Bottom Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-        <PerformanceMetrics teacherData={teacherData} />
-        <RecentActivity />
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <PerformanceMetrics
+          summaryStats={summaryStats}
+          sessionCompletion={summary?.charts?.sessionCompletion || []}
+        />
+        <RecentActivity activities={summary?.recentActivity || []} />
       </div>
     </div>
   );

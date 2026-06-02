@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 type Props = {
   classrooms: Classroom[];
   onSelect: (classroom: Classroom) => void;
-  onCreateTimeTable: () => void;
+  onCreateTimeTable: (classroom: Classroom) => void;
 };
 
 const ClassroomTable = ({ classrooms, onSelect, onCreateTimeTable }: Props) => {
@@ -21,7 +21,7 @@ const ClassroomTable = ({ classrooms, onSelect, onCreateTimeTable }: Props) => {
   };
 
   return (
-    <div className="w-full px-4 sm:px-6 lg:px-8">
+    <div className="w-full">
       {/* Header with stats */}
       <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -52,7 +52,7 @@ const ClassroomTable = ({ classrooms, onSelect, onCreateTimeTable }: Props) => {
             return (
               <div
                 key={cls._id}
-                className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden"
+                className="app-panel rounded-2xl hover:shadow-md transition-all duration-200 overflow-hidden"
               >
                 <div
                   className="p-5 cursor-pointer"
@@ -140,7 +140,10 @@ const ClassroomTable = ({ classrooms, onSelect, onCreateTimeTable }: Props) => {
                   </Link>
                   <button
                     className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium bg-gray-50 hover:bg-gray-100 text-gray-600 hover:text-gray-900 transition-all duration-200"
-                    onClick={onCreateTimeTable}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onCreateTimeTable(cls);
+                    }}
                   >
                     Time Table
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -152,7 +155,7 @@ const ClassroomTable = ({ classrooms, onSelect, onCreateTimeTable }: Props) => {
             );
           })
         ) : (
-          <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center">
+          <div className="app-panel rounded-2xl p-12 text-center">
             <div className="flex flex-col items-center gap-3">
               <div className="w-20 h-20 rounded-full bg-gray-50 flex items-center justify-center">
                 <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -169,7 +172,7 @@ const ClassroomTable = ({ classrooms, onSelect, onCreateTimeTable }: Props) => {
       </div>
 
       {/* Desktop View (Table) */}
-      <div className="hidden lg:block overflow-x-auto rounded-2xl bg-white shadow-sm border border-gray-100">
+      <div className="app-panel hidden lg:block overflow-x-auto rounded-2xl">
         <table className="w-full">
           <thead>
             <tr className="bg-gradient-to-r from-gray-50 to-white border-b border-gray-200">
@@ -289,7 +292,7 @@ const ClassroomTable = ({ classrooms, onSelect, onCreateTimeTable }: Props) => {
                           className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-gray-50 hover:bg-gray-100 text-gray-600 hover:text-gray-900 transition-all duration-200"
                           onClick={(e) => {
                             e.stopPropagation();
-                            onCreateTimeTable();
+                            onCreateTimeTable(cls);
                           }}
                         >
                           <span>Time Table</span>

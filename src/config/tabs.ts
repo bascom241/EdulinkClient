@@ -15,7 +15,8 @@ import {
   HiOutlineBadgeCheck,
   HiOutlineClock,
   HiOutlineUserAdd,
-  HiOutlineLibrary
+  HiOutlineLibrary,
+  HiOutlineShoppingBag
 } from "react-icons/hi";
 
 import type { Tab } from "../types";
@@ -23,8 +24,7 @@ import type { Tab } from "../types";
 // Teacher specific tabs
 const teacherMainTabs: Tab[] = [
   { path: "/dashboard/teacher", icon: HiOutlineClipboardList, label: "Dashboard" },
-  { path: "/dashboard/teacher/classrooms", icon: HiOutlinePlusCircle, label: "Create Class" },
-  // { path: "/dashboard/teacher/classrooms", icon: HiOutlineBookOpen, label: "My Classes" },
+  { path: "/dashboard/teacher/classrooms", icon: HiOutlinePlusCircle, label: "Classrooms" },
   { path: "/dashboard", icon: HiOutlineHome, label: "Home" }
 ];
 
@@ -43,6 +43,7 @@ const teacherMoreTabs: Tab[] = [
 // Student specific tabs
 const studentMainTabs: Tab[] = [
   { path: "/dashboard/student", icon: HiOutlineAcademicCap, label: "Dashboard" },
+  { path: "/dashboard/student/marketplace", icon: HiOutlineShoppingBag, label: "Marketplace" },
   { path: "/dashboard/student/join-room", icon: HiOutlineUserAdd, label: "Join Class" },
   { path: "/dashboard/student/my-classes", icon: HiOutlineLibrary, label: "My Classes" },
   { path: "/dashboard", icon: HiOutlineHome, label: "Home" }

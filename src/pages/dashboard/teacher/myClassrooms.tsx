@@ -6,13 +6,18 @@ import { useClassroomForm } from "../../../features/classroom/hooks/useClassroom
 import {
   useCreateClassroom,
   useGetAllTeacherClassrooms,
+  useCreateSessionTimeTable,
 } from "../../../features/classroom/hooks/useTeacher";
 import { classroomKeys } from "../../../features/classroom/classroomKeys";
+import { sessionKeys } from "../../../features/session/sessionKeys";
 import ClassroomTable from "./components/classroom/ClassroomTable";
 import ClassroomActionBar from "./components/classroom/ClassroomActionBar";
-import ClassHeader from "./components/classroom/ClassHeader";
 import CreateClassWizard from "./components/classroom/CreateClassWizard";
 import CreateTimeTable from "./components/classroom/CreateTimeTable";
+import DashboardShell from "../shared/DashboardShell";
+import Loader from "../../../components/ui/Loader";
+import { HiOutlinePlusCircle } from "react-icons/hi";
+import { getApiErrorMessage } from "../../../utils/apiError";
 const MyClass = () => {
   const queryClient = useQueryClient();
 
@@ -26,8 +31,6 @@ const MyClass = () => {
 
   const [selectedClass, setSelectedClass] =
     useState<Classroom | null>(null);
-
-    console.log(selectedClass)
 
   const [searchQuery, setSearchQuery] =
     useState("");
@@ -59,6 +62,8 @@ const MyClass = () => {
     mutate,
     isPending,
   } = useCreateClassroom();
+
+  const createTimeTable = useCreateSessionTimeTable();
 
   // -----------------------------------
   // CREATE CLASS
@@ -121,11 +126,34 @@ const MyClass = () => {
       },
 
       onError: (error: any) => {
-        toast.error(
-          error?.response?.data?.message ||
-          "Failed to create classroom"
-        );
+        toast.error(getApiErrorMessage(error, "Failed to create classroom"));
       },
+    });
+  };
+
+  const handleOpenTimeTable = (classroom: Classroom) => {
+    setSelectedClass(classroom);
+    setIsTimeTableOpen(true);
+  };
+
+  const handleCreateTimeTable = async (data: {
+    classId: string;
+    topic: string;
+    startTime: string;
+    endTime: string;
+  }) => {
+    await createTimeTable.mutateAsync(data);
+
+    queryClient.invalidateQueries({
+      queryKey: classroomKeys.classroom(data.classId),
+    });
+
+    queryClient.invalidateQueries({
+      queryKey: sessionKeys.list(data.classId),
+    });
+
+    queryClient.invalidateQueries({
+      queryKey: classroomKeys.timetable(data.classId),
     });
   };
 
@@ -139,8 +167,8 @@ const MyClass = () => {
   // -----------------------------------
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="w-10 h-10 border-2 border-[#10b981] border-t-transparent rounded-full animate-spin" />
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <Loader size="lg" message="Loading classrooms..." />
       </div>
     );
   }
@@ -159,12 +187,54 @@ const MyClass = () => {
   // -----------------------------------
   // UI
   // -----------------------------------
-  return (
-    <div className="p-4 md:p-8 bg-white min-h-screen">
-      {/* HEADER */}
-      <ClassHeader />
+  const classroomList = Array.isArray(classrooms) ? classrooms : [];
 
-      {/* ACTION BAR */}
+  const filteredClassrooms = classroomList.filter((classroom) => {
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return true;
+
+    return (
+      classroom.name?.toLowerCase().includes(query) ||
+      classroom.description?.toLowerCase().includes(query) ||
+      classroom._id?.toLowerCase().includes(query)
+    );
+  });
+
+  return (
+    <DashboardShell
+      title="Classrooms"
+      subtitle="Create, organize, schedule, and monitor every class from one polished workspace."
+      icon={HiOutlinePlusCircle}
+      action={
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="app-button-primary rounded-lg px-4 py-2 text-sm font-semibold"
+        >
+          Create Class
+        </button>
+      }
+    >
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+        <div className="app-panel rounded-2xl p-5">
+          <p className="text-sm app-muted">Total Classes</p>
+          <p className="mt-2 text-3xl font-bold text-gray-900">{classrooms.length}</p>
+        </div>
+        <div className="app-panel rounded-2xl p-5">
+          <p className="text-sm app-muted">Visible</p>
+          <p className="mt-2 text-3xl font-bold text-green-600">{filteredClassrooms.length}</p>
+        </div>
+        <div className="app-panel rounded-2xl p-5">
+          <p className="text-sm app-muted">Capacity</p>
+          <p className="mt-2 text-3xl font-bold text-gray-900">
+            {classrooms.reduce((sum, classroom) => sum + Number(classroom.maximumStudent || 0), 0)}
+          </p>
+        </div>
+        <div className="app-panel rounded-2xl p-5">
+          <p className="text-sm app-muted">Theme</p>
+          <p className="mt-2 text-3xl font-bold text-green-600">Live</p>
+        </div>
+      </div>
+
       <ClassroomActionBar
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
@@ -175,9 +245,9 @@ const MyClass = () => {
 
       {/* TABLE */}
       <ClassroomTable
-        classrooms={classrooms}
+        classrooms={filteredClassrooms}
         onSelect={setSelectedClass}
-        onCreateTimeTable={()=>setIsTimeTableOpen(true)}
+        onCreateTimeTable={handleOpenTimeTable}
       />
 
       {/* CREATE MODAL */}
@@ -196,10 +266,11 @@ const MyClass = () => {
       <CreateTimeTable
         isOpen={isTimeTableOpen}
         onClose={()=> setIsTimeTableOpen(false)}
-
-
+        selectedClass={selectedClass}
+        onSubmit={handleCreateTimeTable}
+        isPending={createTimeTable.isPending}
       />
-    </div>
+    </DashboardShell>
   );
 };
 

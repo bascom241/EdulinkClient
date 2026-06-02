@@ -10,6 +10,7 @@ import { FcGoogle } from "react-icons/fc"
 import { FaFacebook } from "react-icons/fa"
 
 import { showCustomToast } from "../../utils/toast"
+import { getApiErrorMessage } from "../../utils/apiError"
 
 import { useRegister } from "../../features/auth/hooks/useRegister"
 import { useRegisterStore } from "../../features/auth/store/registerStore"
@@ -46,15 +47,7 @@ const Register = () => {
             onError: (error: any) => {
                 console.error("Registration error:", error);
 
-                let errorMessage = "Something went wrong ❌";
-
-                if (error?.response?.data?.message) {
-                    errorMessage = error.response.data.message;
-                } else if (error?.message) {
-                    errorMessage = error.message;
-                } else if (typeof error === 'string') {
-                    errorMessage = error;
-                }
+                const errorMessage = getApiErrorMessage(error, "Something went wrong");
                 showCustomToast("error", errorMessage);
             }
         });

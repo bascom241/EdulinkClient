@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
-import { getStudentCounts,getClassCounts, getTeacherClassrooms , createClassroom, getClassCategories, getSingleClassroom} from "../api/teacher"
+import { getStudentCounts,getClassCounts, getTeacherClassrooms , createClassroom, getClassCategories, getSingleClassroom, createSessionTimeTable, getClassTimeTable, updateClassTimeTable, deleteClassTimeTable, getClassStudents} from "../api/teacher"
 import { classroomKeys } from "../classroomKeys"
 
 
@@ -31,6 +31,40 @@ export const useGetAllTeacherClassrooms = () => {
 export const useCreateClassroom = ()  => {
     return useMutation({
         mutationFn:createClassroom, 
+    })
+}
+
+export const useCreateSessionTimeTable = ()  => {
+    return useMutation({
+        mutationFn:createSessionTimeTable,
+    })
+}
+
+export const useGetClassTimeTable = (classId: string) => {
+    return useQuery({
+        queryKey: classroomKeys.timetable(classId),
+        queryFn: () => getClassTimeTable(classId),
+        enabled: !!classId
+    })
+}
+
+export const useUpdateClassTimeTable = () => {
+    return useMutation({
+        mutationFn: updateClassTimeTable
+    })
+}
+
+export const useDeleteClassTimeTable = () => {
+    return useMutation({
+        mutationFn: deleteClassTimeTable
+    })
+}
+
+export const useGetClassStudents = (classId: string) => {
+    return useQuery({
+        queryKey: classroomKeys.classStudents(classId),
+        queryFn: () => getClassStudents(classId),
+        enabled: !!classId
     })
 }
 // Invalidate when admin creates, updates,

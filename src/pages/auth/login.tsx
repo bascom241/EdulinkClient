@@ -9,6 +9,7 @@ import Divider from "../../components/ui/Divider";
 import { FaFacebook, FaSpinner } from "react-icons/fa";
 import SocialButton from "../../components/ui/SocialButton";
 import { showCustomToast } from "../../utils/toast"
+import { getApiErrorMessage } from "../../utils/apiError"
 
 //Hooks 
 import { useNavigate } from "react-router-dom";
@@ -44,14 +45,7 @@ const Login = () => {
       },
       onError: (error: any) => {
         console.error("Registration error:", error);
-        let errorMessage = "Something went wrong ❌";
-        if (error?.response?.data?.message) {
-          errorMessage = error.response.data.message;
-        } else if (error?.message) {
-          errorMessage = error.message;
-        } else if (typeof error === 'string') {
-          errorMessage = error;
-        }
+        const errorMessage = getApiErrorMessage(error, "Something went wrong");
         showCustomToast("error", errorMessage);
       }
     });

@@ -14,28 +14,26 @@ const Loader: React.FC<LoaderProps> = ({
   message,
 }) => {
   const sizeClasses = {
-    sm: 'w-6 h-6',
-    md: 'w-10 h-10',
-    lg: 'w-16 h-16',
-  }
-
-  const colorClasses = {
-    primary: 'border-primary-200 border-t-primary-700',
-    white: 'border-white border-opacity-30 border-t-white',
+    sm: 'w-9 h-9',
+    md: 'w-14 h-14',
+    lg: 'w-20 h-20',
   }
 
   const loader = (
     <div className="flex flex-col items-center justify-center gap-3">
-      <div
-        className={`${sizeClasses[size]} ${colorClasses[color]} rounded-full border-4 animate-spin`}
-      />
-      {message && <p className={`text-sm ${color === 'white' ? 'text-white' : 'text-neutral-600'}`}>{message}</p>}
+      <div className="relative">
+        <div className={`${sizeClasses[size]} rounded-2xl bg-white p-2 shadow-lg ring-1 ring-green-100 app-logo-loader`}>
+          <img src="/EdlinkLogo.png" alt="Edlink" className="h-full w-full rounded-xl object-cover" />
+        </div>
+        <div className="absolute -inset-2 -z-10 rounded-3xl border-2 border-green-200 border-t-green-600 animate-spin" />
+      </div>
+      {message && <p className={`text-sm font-medium ${color === 'white' ? 'text-white' : 'app-muted'}`}>{message}</p>}
     </div>
   )
 
   if (fullScreen) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-neutral-900 bg-opacity-50 z-50">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 backdrop-blur-sm">
         {loader}
       </div>
     )
