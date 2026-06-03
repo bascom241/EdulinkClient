@@ -41,7 +41,7 @@ const Login = () => {
         navigate(searchParams.get("redirect") || "/dashboard")
         resetForm()
       },
-      onError: (error: any) => {
+      onError: (error: unknown) => {
         console.error("Registration error:", error);
         const errorMessage = getApiErrorMessage(error, "Something went wrong");
         showCustomToast("error", errorMessage);
@@ -135,10 +135,22 @@ const Login = () => {
 
             <div className="space-y-2 text-center">
               <p className="text-sm text-gray-600">
+                Don't have an account?
+              </p>
+              <button
+                type="button"
+                onClick={() => navigate("/register")}
+                className="text-sm text-[#15803D] hover:text-[#22C55E] font-semibold transition-colors duration-200 hover:underline underline-offset-2"
+              >
+                Create account
+              </button>
+
+              <p className="text-sm text-gray-600">
                 Having trouble logging in?
               </p>
               <div className="flex flex-col sm:flex-row gap-2 justify-center">
                 <button
+                  type="button"
                   onClick={() => navigate("/forgot-password")}
                   className="text-sm text-[#15803D] hover:text-[#22C55E] font-medium transition-colors duration-200 hover:underline underline-offset-2"
                 >
@@ -146,6 +158,7 @@ const Login = () => {
                 </button>
                 <span className="hidden sm:inline text-gray-300">•</span>
                 <button
+                  type="button"
                   onClick={() => navigate("/token-login")}
                   className="text-sm text-[#15803D] hover:text-[#22C55E] font-medium transition-colors duration-200 hover:underline underline-offset-2"
                 >
