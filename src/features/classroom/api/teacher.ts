@@ -27,6 +27,11 @@ export const createClassroom = async (data: CreateClassPayload) => {
   return res.data.data;
 };
 
+export const bulkArchiveClassrooms = async (classIds: string[]) => {
+  const res = await axiosInstance.post("/classroom/bulk/archive", { classIds });
+  return res.data;
+};
+
 
 export const getClassCategories = async () => {
   const res = await axiosInstance.get("/classroom/get-cats");

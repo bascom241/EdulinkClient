@@ -118,6 +118,27 @@ body {
   background-color: var(--app-surface-soft) !important;
 }
 
+.dark .hover\:bg-gray-50:hover,
+.dark .hover\:bg-gray-50\/80:hover,
+.dark .hover\:bg-gray-100:hover,
+.dark .hover\:bg-neutral-50:hover {
+  background-color: var(--app-surface-soft) !important;
+}
+
+.dark .bg-neutral-50 {
+  background-color: var(--app-surface-soft) !important;
+}
+
+.dark .border-neutral-200 {
+  border-color: var(--app-border) !important;
+}
+
+.dark .text-neutral-900,
+.dark .text-neutral-800,
+.dark .text-neutral-700 {
+  color: var(--app-text) !important;
+}
+
 .dark .border-gray-100,
 .dark .border-gray-200,
 .dark .border-gray-50 {
@@ -132,7 +153,10 @@ body {
 
 .dark .text-gray-600,
 .dark .text-gray-500,
-.dark .text-gray-400 {
+.dark .text-gray-400,
+.dark .text-neutral-600,
+.dark .text-neutral-500,
+.dark .text-neutral-400 {
   color: var(--app-muted) !important;
 }
 

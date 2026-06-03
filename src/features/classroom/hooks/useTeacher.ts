@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
-import { getStudentCounts,getClassCounts, getTeacherClassrooms , createClassroom, getClassCategories, getSingleClassroom, createSessionTimeTable, getClassTimeTable, updateClassTimeTable, deleteClassTimeTable, getClassStudents} from "../api/teacher"
+import { getStudentCounts,getClassCounts, getTeacherClassrooms , createClassroom, getClassCategories, getSingleClassroom, createSessionTimeTable, getClassTimeTable, updateClassTimeTable, deleteClassTimeTable, getClassStudents, bulkArchiveClassrooms} from "../api/teacher"
 import { classroomKeys } from "../classroomKeys"
 
 
@@ -31,6 +31,12 @@ export const useGetAllTeacherClassrooms = () => {
 export const useCreateClassroom = ()  => {
     return useMutation({
         mutationFn:createClassroom, 
+    })
+}
+
+export const useBulkArchiveClassrooms = () => {
+    return useMutation({
+        mutationFn: bulkArchiveClassrooms
     })
 }
 

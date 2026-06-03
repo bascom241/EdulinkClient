@@ -1,11 +1,12 @@
 
 import { Navigate, Outlet } from "react-router-dom";
+import { getStoredRole } from "../features/auth/utils/authToken";
 
 const RoleRoute = ({ allowedRoles }: { allowedRoles: string[] }) => {
-  const role = localStorage.getItem("role");
+  const role = getStoredRole();
 
   if (!allowedRoles.includes(role || "")) {
-    return <Navigate to="/select" replace />;
+    return <Navigate to={role ? "/dashboard" : "/select"} replace />;
   }
 
   return <Outlet />;

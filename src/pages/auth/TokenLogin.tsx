@@ -2,16 +2,13 @@ import Edulink from "../../assets/Edulink.jpg"
 
 
 /// icons
-import { FcGoogle } from "react-icons/fc";
 import Divider from "../../components/ui/Divider";
 import { FaSpinner } from "react-icons/fa"
-import { FaFacebook } from "react-icons/fa";
-import SocialButton from "../../components/ui/SocialButton";
 
 // hooks 
 import { useTokenLogin } from "../../features/auth/hooks/useTokenLogin"
 import { useTokenLoginStore } from "../../features/auth/store/tokenLoginStore"
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 
 // components 
@@ -23,6 +20,7 @@ const TokenLogin = () => {
     const { mutate, isPending } = useTokenLogin();
     const { requestTokenFormData, setRequestTokenFormData, setExpiresToken } = useTokenLoginStore()
     const navigate = useNavigate()
+    const [searchParams] = useSearchParams();
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
         setRequestTokenFormData({ [name]: value })
@@ -34,7 +32,8 @@ const TokenLogin = () => {
             onSuccess: (data) => {
                 console.log(data)
                 showCustomToast("success", data.data?.message || "Token sent successfully")
-                 navigate("/veify-login")
+                const redirect = searchParams.get("redirect");
+                navigate(`/veify-login${redirect ? `?redirect=${encodeURIComponent(redirect)}` : ""}`)
                 setExpiresToken(data.data?.expiresAt)
                
             },
@@ -141,11 +140,6 @@ const TokenLogin = () => {
 
                 </form>
                 <Divider />
-
-                <div className="flex items-center justify-center gap-4">
-                    <SocialButton icon={<FcGoogle size={22} />} />
-                    <SocialButton icon={<FaFacebook size={22} />} />
-                </div>
 
             </section>
 

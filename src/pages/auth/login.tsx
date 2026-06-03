@@ -4,21 +4,21 @@ import Edulink from "../../assets/Edulink.jpg"
 // ui components 
 import Input from "../../components/ui/Input";
 import Button from "../../components/ui/Button";
-import { FcGoogle } from "react-icons/fc";
 import Divider from "../../components/ui/Divider";
-import { FaFacebook, FaSpinner } from "react-icons/fa";
-import SocialButton from "../../components/ui/SocialButton";
+import { FaSpinner } from "react-icons/fa";
 import { showCustomToast } from "../../utils/toast"
 import { getApiErrorMessage } from "../../utils/apiError"
+import { saveAuthSession } from "../../features/auth/utils/authToken";
 
 //Hooks 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useLogin } from "../../features/auth/hooks/useLogin";
 import { useLoginStore } from "../../features/auth/store/loginStore";
 const Login = () => {
   const { formData, setFormData, resetForm, setToken } = useLoginStore()
   const { mutate, isPending } = useLogin()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams();
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData({ [name]: value })
@@ -31,16 +31,14 @@ const Login = () => {
       onSuccess: (data) => {
         console.log(data)
         const token = data?.data?.token
-        const   refreshToken = data?.data.refreshToken;
+        const refreshToken = data?.data?.refreshToken;
         const role = data?.data.role;
         if (token) {
           setToken(token)
-          localStorage.setItem("accessToken", token);
-          localStorage.setItem("refreshToken",  refreshToken)
-          localStorage.setItem("role",role )
+          saveAuthSession({ accessToken: token, refreshToken, role });
         }
         showCustomToast("success", data?.message || "Login successful!")
-        navigate("/dashboard")
+        navigate(searchParams.get("redirect") || "/dashboard")
         resetForm()
       },
       onError: (error: any) => {
@@ -156,13 +154,7 @@ const Login = () => {
               </div>
             </div>
           </div>
-
           <Divider />
-
-          <div className="flex items-center justify-center gap-4">
-            <SocialButton icon={<FcGoogle size={22} />} />
-            <SocialButton icon={<FaFacebook size={22} />} />
-          </div>
 
         </form>
       </section>

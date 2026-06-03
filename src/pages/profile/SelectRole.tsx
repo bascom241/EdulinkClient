@@ -3,7 +3,7 @@ import { useAuthStore } from "../../features/auth/store/useAuthStore";
 import type { UpdateRole } from "../../types/userType";
 import { useNavigate } from "react-router-dom";
 import { showCustomToast } from "../../utils/toast";
-import toast from "react-hot-toast";
+import { getAccessToken, saveAuthSession } from "../../features/auth/utils/authToken";
 
 const Select = () => {
   const { role, setRole } = useAuthStore();
@@ -26,12 +26,19 @@ const Select = () => {
           data?.message || `Role has been set to ${role}`
         );
 
-        // redirect after success
+        const token = data?.data?.token || getAccessToken();
+        if (token) {
+          saveAuthSession({
+            accessToken: token,
+            refreshToken: data?.data?.refreshToken,
+            role: data?.data?.role || role,
+          });
+        }
+
         if (role === "ROLE_USER") {
-          localStorage.setItem("role", role)
           navigate("/dashboard/student");
         } else {
-          toast.error("Failed to load the student dashboard")
+          navigate("/teacher-profile");
         }
       },
       onError: (error: any) => {

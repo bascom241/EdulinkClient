@@ -24,11 +24,11 @@ const DashboardIndex = () => {
   }, [role, navigate]);
 
   const message =
-    role === "TEACHER"
+    role === "ROLE_TEACHER"
       ? "Preparing your teaching workspace..."
-      : role === "STUDENT"
+      : role === "ROLE_USER"
       ? "Loading your learning dashboard..."
-      : role === "ADMIN"
+      : role === "ROLE_ADMIN"
       ? "Setting up admin controls..."
       : "Getting things ready...";
 

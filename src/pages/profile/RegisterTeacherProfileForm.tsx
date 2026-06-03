@@ -4,6 +4,8 @@ import Input from "../../components/ui/Input";
 import { useCreateTeacherProfile } from "../../features/profile/hooks/useTeacherProfile";
 import { showCustomToast } from "../../utils/toast";
 import { FaSpinner } from "react-icons/fa"
+import { useNavigate } from "react-router-dom";
+import { getAccessToken, saveAuthSession } from "../../features/auth/utils/authToken";
 export type TeachingExperience = "Beginner" | "Intermediate" | "Advanced";
 
 export interface TeacherFormData {
@@ -25,6 +27,7 @@ const RegisterTeacherProfileForm = () => {
     });
 
     const [courseInput, setCourseInput] = useState("");
+    const navigate = useNavigate();
 
     const countries = [
         "United States", "United Kingdom", "Canada", "Australia", "Germany",
@@ -107,6 +110,11 @@ const RegisterTeacherProfileForm = () => {
                     "success",
                     data?.message || "Profile created successfully"
                 );
+                const token = getAccessToken();
+                if (token) {
+                    saveAuthSession({ accessToken: token, role: "ROLE_TEACHER" });
+                }
+                navigate("/dashboard/teacher");
             },
             onError: (error: any) => {
                 console.log(error.response)

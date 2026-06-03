@@ -68,15 +68,15 @@ function App() {
             </Route>
 
             <Route element={<RoleRoute allowedRoles={["ROLE_USER"]} />}>
-              <Route path="/dashboard/student" element={<StudentDashboard />} />
-              <Route path="/dashboard/student/marketplace" element={<StudentMarketplace />} />
-              <Route path="/dashboard/student/join-room" element={<StudentJoinClass />} />
-              <Route path="/dashboard/student/my-classes" element={<StudentClasses />} />
-              <Route path="/dashboard/student/assignments" element={<StudentAssignments />} />
-              <Route path="/dashboard/student/schedule" element={<StudentSchedule />} />
-              <Route path="/dashboard/student/grades" element={<StudentGrades />} />
-              <Route path="/dashboard/student/attendance" element={<StudentAttendance />} />
-              <Route path="/dashboard/student/materials" element={<StudentMaterials />} />
+              <Route path="student" element={<StudentDashboard />} />
+              <Route path="student/marketplace" element={<StudentMarketplace />} />
+              <Route path="student/join-room" element={<StudentJoinClass />} />
+              <Route path="student/my-classes" element={<StudentClasses />} />
+              <Route path="student/assignments" element={<StudentAssignments />} />
+              <Route path="student/schedule" element={<StudentSchedule />} />
+              <Route path="student/grades" element={<StudentGrades />} />
+              <Route path="student/attendance" element={<StudentAttendance />} />
+              <Route path="student/materials" element={<StudentMaterials />} />
             </Route>
 
             <Route path="settings" element={<Settings />} />

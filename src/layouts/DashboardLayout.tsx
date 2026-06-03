@@ -11,6 +11,7 @@ import Sidebar from "../components/ui/SideBar";
 import ThemeToggle from "../components/ui/ThemeToggle";
 import { HiOutlineSearch } from "react-icons/hi";
 import { useLiveNotifications } from "../realtime/useLiveNotifications.tsx";
+import { clearAuthSession } from "../features/auth/utils/authToken";
 const DashboardLayout: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
@@ -29,9 +30,7 @@ const DashboardLayout: React.FC = () => {
     };
 
     const handleLogout = () => {
-        localStorage.removeItem('role');
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        clearAuthSession();
         navigate('/login');
     };
 

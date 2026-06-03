@@ -1,9 +1,16 @@
 import axios from "axios";
+import {
+  clearAuthSession,
+  getAccessToken,
+  getRefreshToken,
+  saveAuthSession,
+} from "../features/auth/utils/authToken";
 
-const baseURL = import.meta.env.VITE_API_URL || "http://localhost:3000/api/v1";
-
+const baseURL =    "https://edlink-psi.vercel.app/api/v1";
+const localUrl = "http://localhost:3000/api/v1 "
+console.log(localUrl, baseURL)
 const axiosInstance = axios.create({
-  baseURL,
+  baseURL
 });
 
 const publicUrls = [
@@ -11,6 +18,7 @@ const publicUrls = [
   "/auth/register",
   "/auth/login-with-token",
   "/auth/verify-login",
+  "/auth/refresh",
 ];
 
 const formatRetryAfter = (seconds?: number) => {
@@ -41,7 +49,7 @@ axiosInstance.interceptors.request.use(
     const isPublicRoute = publicUrls.some((url) => config.url?.includes(url));
 
     if (!isPublicRoute) {
-      const token = localStorage.getItem("accessToken");
+      const token = getAccessToken();
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -105,7 +113,14 @@ axiosInstance.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const refreshToken = localStorage.getItem("refreshToken");
+        const refreshToken = getRefreshToken();
+        if (!refreshToken) {
+          clearAuthSession();
+          window.location.href = `/login?redirect=${encodeURIComponent(
+            window.location.pathname + window.location.search
+          )}`;
+          return Promise.reject(error);
+        }
 
         const res = await axios.post(`${baseURL}/auth/refresh`, {
           refreshToken,
@@ -114,8 +129,10 @@ axiosInstance.interceptors.response.use(
         const newAccessToken = res.data.data.accessToken;
         const newRefreshToken = res.data.data.refreshToken;
 
-        localStorage.setItem("accessToken", newAccessToken);
-        localStorage.setItem("refreshToken", newRefreshToken);
+        saveAuthSession({
+          accessToken: newAccessToken,
+          refreshToken: newRefreshToken,
+        });
 
         axiosInstance.defaults.headers.Authorization =
           "Bearer " + newAccessToken;
@@ -126,10 +143,11 @@ axiosInstance.interceptors.response.use(
       } catch (err) {
         processQueue(err, null);
 
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
+        clearAuthSession();
 
-        window.location.href = "/login";
+        window.location.href = `/login?redirect=${encodeURIComponent(
+          window.location.pathname + window.location.search
+        )}`;
 
         return Promise.reject(err);
       } finally {

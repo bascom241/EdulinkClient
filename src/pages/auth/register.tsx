@@ -3,14 +3,12 @@ import { useState } from "react"
 import Input from "../../components/ui/Input"
 import Button from "../../components/ui/Button"
 import Divider from "../../components/ui/Divider"
-import SocialButton from "../../components/ui/SocialButton"
 import ToggleSwitch from "../../components/ui/ToggleSwitch"
 import Edulink from "../../assets/Edulink.jpg"
-import { FcGoogle } from "react-icons/fc"
-import { FaFacebook } from "react-icons/fa"
 
 import { showCustomToast } from "../../utils/toast"
 import { getApiErrorMessage } from "../../utils/apiError"
+import { saveAuthSession } from "../../features/auth/utils/authToken"
 
 import { useRegister } from "../../features/auth/hooks/useRegister"
 import { useRegisterStore } from "../../features/auth/store/registerStore"
@@ -32,11 +30,10 @@ const Register = () => {
                 console.log(data);
 
                 const token = data?.data?.token
-                const refreshToken = data?.data.refreshToken;
+                const refreshToken = data?.data?.refreshToken;
                 if (token) {
                     setToken(token)
-                    localStorage.setItem("accessToken", token);
-                    localStorage.setItem("refreshToken", refreshToken)
+                    saveAuthSession({ accessToken: token, refreshToken })
                 }
                 const successMessage = data?.message || "Registration successful!";
                 showCustomToast("success", successMessage);
@@ -149,13 +146,7 @@ const Register = () => {
                     >
                         Already Have an accout? Login
                     </button>
-
                     <Divider />
-
-                    <div className="flex items-center justify-center gap-4">
-                        <SocialButton icon={<FcGoogle size={22} />} />
-                        <SocialButton icon={<FaFacebook size={22} />} />
-                    </div>
 
                 </form>
 

@@ -7,6 +7,7 @@ import {
   useCreateClassroom,
   useGetAllTeacherClassrooms,
   useCreateSessionTimeTable,
+  useBulkArchiveClassrooms,
 } from "../../../features/classroom/hooks/useTeacher";
 import { classroomKeys } from "../../../features/classroom/classroomKeys";
 import { sessionKeys } from "../../../features/session/sessionKeys";
@@ -34,6 +35,8 @@ const MyClass = () => {
 
   const [searchQuery, setSearchQuery] =
     useState("");
+  const [filterValue, setFilterValue] = useState("all");
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   // -----------------------------------
   // FORM HOOK
@@ -64,6 +67,7 @@ const MyClass = () => {
   } = useCreateClassroom();
 
   const createTimeTable = useCreateSessionTimeTable();
+  const bulkArchive = useBulkArchiveClassrooms();
 
   // -----------------------------------
   // CREATE CLASS
@@ -157,6 +161,59 @@ const MyClass = () => {
     });
   };
 
+  const exportClassrooms = (rows: Classroom[]) => {
+    const exportRows = selectedIds.length
+      ? rows.filter((classroom) => selectedIds.includes(classroom._id))
+      : rows;
+
+    if (exportRows.length === 0) {
+      toast.error("No classrooms to export");
+      return;
+    }
+
+    const headers = ["Name", "Description", "Students", "Capacity", "Price", "Location", "Level"];
+    const csvRows = exportRows.map((classroom) => [
+      classroom.name,
+      classroom.description || "",
+      String(classroom.students?.length || 0),
+      String(classroom.maximumStudent || 0),
+      String(classroom.price || 0),
+      classroom.location || "",
+      classroom.classLevel || "",
+    ]);
+    const escapeCsv = (value: string) => `"${value.replace(/"/g, '""')}"`;
+    const csv = [headers, ...csvRows]
+      .map((row) => row.map((value) => escapeCsv(String(value))).join(","))
+      .join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `edlink-classrooms-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleBulkArchive = () => {
+    if (selectedIds.length === 0) {
+      toast.error("Select at least one classroom");
+      return;
+    }
+
+    bulkArchive.mutate(selectedIds, {
+      onSuccess: (data) => {
+        toast.success(data?.message || "Classrooms archived");
+        setSelectedIds([]);
+        queryClient.invalidateQueries({
+          queryKey: classroomKeys.teacherClassrooms(),
+        });
+      },
+      onError: (error: any) => {
+        toast.error(getApiErrorMessage(error, "Bulk archive failed"));
+      },
+    });
+  };
+
   // -----------------------------------
   // FILTER CLASSROOMS
   // -----------------------------------
@@ -191,13 +248,23 @@ const MyClass = () => {
 
   const filteredClassrooms = classroomList.filter((classroom) => {
     const query = searchQuery.trim().toLowerCase();
-    if (!query) return true;
-
-    return (
+    const matchesQuery = !query ||
       classroom.name?.toLowerCase().includes(query) ||
       classroom.description?.toLowerCase().includes(query) ||
-      classroom._id?.toLowerCase().includes(query)
-    );
+      classroom._id?.toLowerCase().includes(query);
+
+    const location = classroom.location?.toLowerCase();
+    const price = Number(classroom.price || 0);
+    const students = classroom.students?.length || 0;
+    const capacity = Number(classroom.maximumStudent || 0);
+    const matchesFilter =
+      filterValue === "all" ||
+      filterValue === location ||
+      (filterValue === "free" && price === 0) ||
+      (filterValue === "paid" && price > 0) ||
+      (filterValue === "full" && capacity > 0 && students >= capacity);
+
+    return matchesQuery && matchesFilter;
   });
 
   return (
@@ -238,6 +305,12 @@ const MyClass = () => {
       <ClassroomActionBar
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
+        filterValue={filterValue}
+        setFilterValue={setFilterValue}
+        selectedCount={selectedIds.length}
+        onBulkArchive={handleBulkArchive}
+        onExport={() => exportClassrooms(filteredClassrooms)}
+        isBulkPending={bulkArchive.isPending}
         onCreate={() =>
           setIsModalOpen(true)
         }
@@ -246,6 +319,8 @@ const MyClass = () => {
       {/* TABLE */}
       <ClassroomTable
         classrooms={filteredClassrooms}
+        selectedIds={selectedIds}
+        onSelectedIdsChange={setSelectedIds}
         onSelect={setSelectedClass}
         onCreateTimeTable={handleOpenTimeTable}
       />

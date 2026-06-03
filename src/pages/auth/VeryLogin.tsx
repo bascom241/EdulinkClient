@@ -8,6 +8,8 @@ import { useState } from "react"
 import { showCustomToast } from "../../utils/toast"
 import { useLoginStore } from "../../features/auth/store/loginStore"
 import { FaSpinner } from "react-icons/fa"
+import { useNavigate, useSearchParams } from "react-router-dom"
+import { saveAuthSession } from "../../features/auth/utils/authToken"
 const VeryLogin = () => {
 
 
@@ -16,6 +18,8 @@ const VeryLogin = () => {
     const expiresAt: Date = expiresToken ? new Date(expiresToken) : new Date();
     const { mutate, isPending } = useVerifyToken();
     const {setToken} = useLoginStore()
+    const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const parsedToken = tokenInput.join("");
     console.log(parsedToken);
     console.log(requestTokenFormData)
@@ -30,16 +34,15 @@ const VeryLogin = () => {
         mutate(dataToSend, {
             onSuccess: (data) => {
                 const token = data?.data?.token
-                const refreshToken = data?.data.refreshToken;
+                const refreshToken = data?.data?.refreshToken;
                 const role = data?.data.role;
                 console.log(token, refreshToken);
                 if (token) {
                     setToken(token)
-                    localStorage.setItem("accessToken", token);
-                    localStorage.setItem("refreshToken", refreshToken)
-                    localStorage.setItem("role", role)
+                    saveAuthSession({ accessToken: token, refreshToken, role })
                 }
                 showCustomToast("success", data?.message || "Login successful!")
+                navigate(searchParams.get("redirect") || "/dashboard")
             },
             onError: (error: any) => {
                 console.error("Registration error:", error);
