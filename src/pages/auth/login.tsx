@@ -92,7 +92,7 @@ const Login = () => {
 
       <section className="bg-white py-8 px-6 md:px-16 lg:px-32 w-full md:w-1/2">
         <h1 className="text-center text-green-600 font-bold text-xl mb-2">
-          Welcome back Peace
+          Welcome back User
         </h1>
 
 
