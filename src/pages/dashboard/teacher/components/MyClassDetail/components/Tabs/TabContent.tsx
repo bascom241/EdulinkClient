@@ -52,7 +52,7 @@ const TimetablePanel = ({ classId }: { classId: string }) => {
   const updateMutation = useUpdateClassTimeTable();
   const deleteMutation = useDeleteClassTimeTable();
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState({ topic: "", startTime: "", endTime: "" });
+  const [form, setForm] = useState({ topic: "", startTime: "", endTime: "", liveRoomUrl: "" });
 
   const toInputDate = (date?: string) => {
     if (!date) return "";
@@ -61,13 +61,14 @@ const TimetablePanel = ({ classId }: { classId: string }) => {
     return value.toISOString().slice(0, 16);
   };
 
-  const startEdit = (item: { _id?: string; topic: string; startTime: string; endTime: string }) => {
+  const startEdit = (item: { _id?: string; topic: string; startTime: string; endTime: string; liveRoomUrl?: string }) => {
     if (!item._id) return;
     setEditingId(item._id);
     setForm({
       topic: item.topic,
       startTime: toInputDate(item.startTime),
       endTime: toInputDate(item.endTime),
+      liveRoomUrl: item.liveRoomUrl || "",
     });
   };
 
@@ -79,6 +80,7 @@ const TimetablePanel = ({ classId }: { classId: string }) => {
       topic: form.topic,
       startTime: form.startTime,
       endTime: form.endTime,
+      liveRoomUrl: form.liveRoomUrl.trim() || undefined,
     });
     queryClient.invalidateQueries({ queryKey: classroomKeys.timetable(classId) });
     setEditingId(null);
@@ -123,6 +125,13 @@ const TimetablePanel = ({ classId }: { classId: string }) => {
                     onChange={(e) => setForm((prev) => ({ ...prev, endTime: e.target.value }))}
                     className="px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
                   />
+                  <input
+                    type="url"
+                    value={form.liveRoomUrl}
+                    onChange={(e) => setForm((prev) => ({ ...prev, liveRoomUrl: e.target.value }))}
+                    placeholder="https://meet.google.com/..."
+                    className="md:col-span-4 px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                  />
                   <div className="md:col-span-4 flex gap-2 justify-end">
                     <button onClick={() => setEditingId(null)} className="px-4 py-2 text-sm rounded-lg bg-gray-100 text-gray-700">
                       Cancel
@@ -138,6 +147,9 @@ const TimetablePanel = ({ classId }: { classId: string }) => {
                     <h3 className="font-semibold text-gray-900">{item.topic}</h3>
                     <p className="text-sm text-gray-500 mt-1">
                       {formatDateTime(item.startTime)} to {formatDateTime(item.endTime)}
+                    </p>
+                    <p className="mt-1 text-xs text-gray-400">
+                      {item.liveRoomUrl ? "Uses session Google Meet link" : "Uses class default Google Meet link"}
                     </p>
                   </div>
                   <div className="flex gap-2">

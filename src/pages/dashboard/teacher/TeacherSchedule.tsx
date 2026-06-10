@@ -1,7 +1,8 @@
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
-import { HiOutlineCalendar } from "react-icons/hi";
+import { HiOutlineCalendar, HiOutlineClipboardCopy } from "react-icons/hi";
 import { useGetAllTeacherClassrooms, useGetClassTimeTable } from "../../../features/classroom/hooks/useTeacher";
 import { useCreateLiveSession } from "../../../features/session/hooks/useTeacher";
 import { sessionKeys } from "../../../features/session/sessionKeys";
@@ -19,21 +20,73 @@ const formatDateTime = (date?: string) => {
   });
 };
 
-const ClassSchedule = ({ classId, className }: { classId: string; className: string }) => {
+const isGoogleMeetLink = (link?: string) =>
+  !!link && /^https:\/\/meet\.google\.com\/[a-z0-9-]+/i.test(link.trim());
+
+const ClassSchedule = ({
+  classId,
+  className,
+  defaultLink,
+}: {
+  classId: string;
+  className: string;
+  defaultLink?: string;
+}) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data } = useGetClassTimeTable(classId);
   const createLive = useCreateLiveSession();
+  const [now, setNow] = useState(() => Date.now());
   const sessions = data?.sessions || [];
 
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(Date.now()), 30000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  const getSessionState = (session: any) => {
+    const start = new Date(session.startTime).getTime();
+    const end = new Date(session.endTime).getTime();
+    if (now < start) return "upcoming";
+    if (now > end) return "ended";
+    return "ready";
+  };
+
+  const handleShare = async () => {
+    const link = `${window.location.origin}/classes/${classId}`;
+    try {
+      await navigator.clipboard.writeText(link);
+      toast.success("Class link copied");
+    } catch {
+      toast.error(link);
+    }
+  };
+
   const handleStartLive = async (session: any) => {
+    const suggestedLink = isGoogleMeetLink(session.liveRoomUrl)
+      ? session.liveRoomUrl
+      : isGoogleMeetLink(defaultLink)
+      ? defaultLink
+      : "";
+    const liveRoomUrl = window.prompt(
+      "Confirm or paste the Google Meet link for this live class",
+      suggestedLink,
+    );
+    if (!liveRoomUrl) return;
+    if (!isGoogleMeetLink(liveRoomUrl)) {
+      toast.error("Please paste a valid Google Meet link");
+      return;
+    }
+
     try {
       const liveSession = await createLive.mutateAsync({
         classroom: classId,
+        timetableId: session._id,
         topic: session.topic,
         startTime: new Date().toISOString(),
         endTime: session.endTime,
         sessionStatus: "ongoing",
+        liveRoomUrl: liveRoomUrl.trim(),
       });
 
       queryClient.invalidateQueries({ queryKey: sessionKeys.list(classId) });
@@ -51,30 +104,47 @@ const ClassSchedule = ({ classId, className }: { classId: string; className: str
     <section className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
       <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
         <h2 className="font-semibold text-gray-900">{className}</h2>
-        <Link to={`/dashboard/teacher/${classId}`} className="text-sm font-medium text-green-600">
-          Manage
-        </Link>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handleShare}
+            className="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 hover:border-green-200 hover:text-green-700"
+          >
+            <HiOutlineClipboardCopy />
+            Share
+          </button>
+          <Link to={`/dashboard/teacher/${classId}`} className="text-sm font-medium text-green-600">
+            Manage
+          </Link>
+        </div>
       </div>
       <div className="divide-y divide-gray-100">
-        {sessions.map((session) => (
-          <div key={session._id || session.startTime} className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-3">
-            <div>
-              <h3 className="font-medium text-gray-900">{session.topic}</h3>
-              <p className="text-sm text-gray-500">{formatDateTime(session.startTime)} to {formatDateTime(session.endTime)}</p>
+        {sessions.map((session) => {
+          const state = getSessionState(session);
+          const canStart = state === "ready";
+
+          return (
+            <div key={session._id || session.startTime} className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-3">
+              <div>
+                <h3 className="font-medium text-gray-900">{session.topic}</h3>
+                <p className="text-sm text-gray-500">{formatDateTime(session.startTime)} to {formatDateTime(session.endTime)}</p>
+              </div>
+              <span className={`w-fit rounded-full px-3 py-1 text-xs font-medium ${
+                canStart ? "bg-green-50 text-green-700" : "bg-gray-100 text-gray-600"
+              }`}>
+                {state === "upcoming" ? "Scheduled" : state === "ended" ? "Ended" : "Ready now"}
+              </span>
+              <button
+                type="button"
+                onClick={() => handleStartLive(session)}
+                disabled={!canStart || createLive.isPending}
+                className="w-fit rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {createLive.isPending ? "Starting..." : "Start live"}
+              </button>
             </div>
-            <span className="w-fit rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-700">
-              Timetable
-            </span>
-            <button
-              type="button"
-              onClick={() => handleStartLive(session)}
-              disabled={createLive.isPending}
-              className="w-fit rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {createLive.isPending ? "Starting..." : "Start live"}
-            </button>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );
@@ -106,7 +176,12 @@ const TeacherSchedule = () => {
 
       {classrooms.length > 0 ? (
         classrooms.map((classroom) => (
-          <ClassSchedule key={classroom._id} classId={classroom._id} className={classroom.name} />
+          <ClassSchedule
+            key={classroom._id}
+            classId={classroom._id}
+            className={classroom.name}
+            defaultLink={classroom.defaultLink}
+          />
         ))
       ) : (
         <div className="bg-white border border-dashed border-gray-200 rounded-2xl p-10 text-center text-gray-500">

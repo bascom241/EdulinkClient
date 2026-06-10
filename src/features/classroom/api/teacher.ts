@@ -48,6 +48,7 @@ export const createSessionTimeTable = async (data: {
   topic: string;
   startTime: string;
   endTime: string;
+  liveRoomUrl?: string;
 }) => {
   const res = await axiosInstance.post("/classroom/session-time-table", data);
   return res.data.data;
@@ -64,6 +65,7 @@ export const updateClassTimeTable = async (data: {
   topic: string;
   startTime: string;
   endTime: string;
+  liveRoomUrl?: string;
 }): Promise<TimeTableResponse> => {
   const res = await axiosInstance.patch(
     `/classroom/${data.classId}/timetable/${data.timetableId}`,
@@ -71,6 +73,7 @@ export const updateClassTimeTable = async (data: {
       topic: data.topic,
       startTime: data.startTime,
       endTime: data.endTime,
+      liveRoomUrl: data.liveRoomUrl,
     },
   );
   return res.data.data;

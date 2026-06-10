@@ -4,13 +4,18 @@ import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import {
   HiOutlineArrowLeft,
+  HiOutlineExclamation,
+  HiOutlineExternalLink,
   HiOutlineClock,
   HiOutlineStatusOnline,
   HiOutlineUserGroup,
 } from "react-icons/hi";
 import DashboardShell from "./DashboardShell";
 import Loader from "../../../components/ui/Loader";
-import { useGetSingleSession } from "../../../features/session/hooks/useTeacher";
+import {
+  useGetLiveSessionAccess,
+  useGetSingleSession,
+} from "../../../features/session/hooks/useTeacher";
 import {
   useCheckInSession,
   useCheckOutSession,
@@ -43,18 +48,28 @@ const LiveClassRoom = () => {
   const role = localStorage.getItem("role");
   const isStudent = role === "ROLE_USER";
   const sessionQuery = useGetSingleSession(sessionId);
+  const liveAccessQuery = useGetLiveSessionAccess(sessionId);
   const checkIn = useCheckInSession();
   const checkOut = useCheckOutSession();
   const checkedInRef = useRef(false);
   const checkedOutRef = useRef(false);
   const [activity, setActivity] = useState<ActivityItem[]>([]);
+  const [hasOpenedMeet, setHasOpenedMeet] = useState(false);
+  const [isCheckedIn, setIsCheckedIn] = useState(false);
   const session = sessionQuery.data;
+  const liveAccess = liveAccessQuery.data;
   const classId = session?.classId;
   const liveRoomUrl = useMemo(() => {
+    if (liveAccess?.liveRoomUrl) return liveAccess.liveRoomUrl;
     if (session?.liveRoomUrl) return session.liveRoomUrl;
-    if (sessionId) return `https://meet.jit.si/edlink-${sessionId}`;
     return "";
-  }, [session?.liveRoomUrl, sessionId]);
+  }, [liveAccess?.liveRoomUrl, session?.liveRoomUrl]);
+
+  useEffect(() => {
+    if (!isStudent || !liveAccess?.isJoined) return;
+    checkedInRef.current = true;
+    setIsCheckedIn(true);
+  }, [isStudent, liveAccess?.isJoined]);
 
   useEffect(() => {
     const socket = getLiveSocket();
@@ -108,25 +123,33 @@ const LiveClassRoom = () => {
     };
   }, [classId, sessionId]);
 
-  useEffect(() => {
-    if (!isStudent || !sessionId || !classId || checkedInRef.current) return;
+  const handleJoinGoogleMeet = async () => {
+    if (!liveRoomUrl) {
+      toast.error("Google Meet link is not available yet");
+      return;
+    }
 
-    checkedInRef.current = true;
-    checkIn.mutate(
-      { sessionId, classId },
-      {
-        onSuccess: () => toast.success("Attendance recorded"),
-        onSettled: () => {
-          queryClient.invalidateQueries({ queryKey: workspaceKeys.dashboardSummary });
-          queryClient.invalidateQueries({ queryKey: workspaceKeys.grades });
-        },
-        onError: (error: any) => {
-          checkedInRef.current = false;
-          toast.error(getApiErrorMessage(error, "Could not record attendance"));
-        },
+    if (isStudent && sessionId && classId && !checkedInRef.current) {
+      try {
+        await checkIn.mutateAsync({ sessionId, classId });
+        checkedInRef.current = true;
+        setIsCheckedIn(true);
+        toast.success("Attendance check-in recorded");
+        queryClient.invalidateQueries({ queryKey: workspaceKeys.dashboardSummary });
+        queryClient.invalidateQueries({ queryKey: workspaceKeys.grades });
+      } catch (error: any) {
+        toast.error(getApiErrorMessage(error, "Could not record attendance"));
+        return;
       }
-    );
-  }, [checkIn, classId, isStudent, sessionId]);
+    }
+
+    const meetWindow = window.open(liveRoomUrl, "_blank", "noopener,noreferrer");
+    if (!meetWindow) {
+      toast.error("Please allow pop-ups so Google Meet can open");
+      return;
+    }
+    setHasOpenedMeet(true);
+  };
 
   useEffect(() => {
     if (!isStudent || !sessionId) return;
@@ -149,7 +172,7 @@ const LiveClassRoom = () => {
     };
   }, [checkOut, isStudent, queryClient, sessionId]);
 
-  if (sessionQuery.isLoading) {
+  if (sessionQuery.isLoading || liveAccessQuery.isLoading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
         <Loader size="lg" message="Opening live class..." />
@@ -178,7 +201,7 @@ const LiveClassRoom = () => {
   return (
     <DashboardShell
       title={session.topic || "Live Class"}
-      subtitle="Join the embedded live classroom. Student attendance is tracked when the room opens and duration is saved when they leave."
+      subtitle="Join Google Meet from EduLink. Student attendance is checked in here and duration is saved while this page stays open."
       icon={HiOutlineStatusOnline}
       action={
         <button
@@ -202,21 +225,52 @@ const LiveClassRoom = () => {
                 {formatDateTime(session.startTime)} to {formatDateTime(session.endTime)}
               </p>
             </div>
-            <a
-              href={liveRoomUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="w-fit rounded-lg bg-green-50 px-3 py-2 text-sm font-semibold text-green-700"
+            <button
+              type="button"
+              onClick={handleJoinGoogleMeet}
+              disabled={checkIn.isPending || !liveRoomUrl || (isStudent && isCheckedIn)}
+              className="inline-flex w-fit items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
             >
-              Open in new tab
-            </a>
+              <HiOutlineExternalLink />
+              {checkIn.isPending
+                ? "Recording attendance..."
+                : isStudent && isCheckedIn
+                ? "Joined and tracking"
+                : "Join Google Meet"}
+            </button>
           </div>
-          <iframe
-            title="EduLink live classroom"
-            src={liveRoomUrl}
-            allow="camera; microphone; fullscreen; display-capture; autoplay"
-            className="h-[72vh] min-h-[520px] w-full border-0 bg-gray-950"
-          />
+
+          <div className="space-y-5 p-6">
+            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
+              <div className="flex items-start gap-3">
+                <div className="rounded-xl bg-amber-100 p-2 text-amber-700">
+                  <HiOutlineExclamation size={22} />
+                </div>
+                <div>
+                  <h2 className="font-bold text-amber-900">Keep EduLink open</h2>
+                  <p className="mt-2 text-sm leading-6 text-amber-800">
+                    Google Meet opens in a new tab. EduLink records your check-in when you click
+                    Join Google Meet, then tracks checkout while this page stays open. Do not close
+                    this EduLink tab until class is finished.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-2xl bg-gray-50 p-6 text-center">
+              <HiOutlineStatusOnline className="mx-auto text-green-600" size={42} />
+              <h2 className="mt-4 text-xl font-bold text-gray-900">Google Meet class room</h2>
+              <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-gray-500">
+                Use the button above to open the class meeting. Return to this EduLink tab when you
+                are done so your attendance duration can be saved.
+              </p>
+              {hasOpenedMeet && (
+                <p className="mt-4 text-sm font-semibold text-green-700">
+                  Meet opened. Attendance tracking is active while this page remains open.
+                </p>
+              )}
+            </div>
+          </div>
         </div>
 
         <aside className="space-y-4">
@@ -228,12 +282,12 @@ const LiveClassRoom = () => {
               <div>
                 <p className="text-sm app-muted">Attendance</p>
                 <p className="font-bold text-gray-900">
-                  {isStudent ? "Auto tracking" : "Live tracking"}
+                  {isStudent ? (isCheckedIn ? "Tracking active" : "Waiting for join") : "Live tracking"}
                 </p>
               </div>
             </div>
             <p className="mt-4 text-sm leading-6 text-gray-500">
-              Students are checked in when they enter this room and checked out when they leave.
+              Students are checked in when they click Join Google Meet and checked out when they leave this EduLink page.
             </p>
           </div>
 

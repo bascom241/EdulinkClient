@@ -1,5 +1,5 @@
 import axiosInstance from "../../../api/axios";
-import type { Classroom, MarketplaceResponse, TimeTableResponse } from "../../../types/classroomTypes";
+import type { Classroom, MarketplaceClassroom, MarketplaceResponse, TimeTableResponse } from "../../../types/classroomTypes";
 
 export const getStudentClassrooms = async (): Promise<Classroom[]> => {
   const res = await axiosInstance.get("/classroom/get-student-class");
@@ -30,4 +30,9 @@ export const getStudentMarketplace = async (params: {
 export const joinMarketplaceClass = async (classId: string): Promise<string> => {
   const res = await axiosInstance.post("/classroom/join", { classId });
   return res.data?.data;
+};
+
+export const getPublicClassroom = async (classId: string): Promise<MarketplaceClassroom & { sessions?: TimeTableResponse["sessions"] }> => {
+  const res = await axiosInstance.get(`/classroom/public/${classId}`);
+  return res.data.data;
 };

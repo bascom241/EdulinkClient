@@ -139,7 +139,10 @@ const Login = () => {
               </p>
               <button
                 type="button"
-                onClick={() => navigate("/register")}
+                onClick={() => {
+                  const redirect = searchParams.get("redirect");
+                  navigate(redirect ? `/register?redirect=${encodeURIComponent(redirect)}` : "/register");
+                }}
                 className="text-sm text-[#15803D] hover:text-[#22C55E] font-semibold transition-colors duration-200 hover:underline underline-offset-2"
               >
                 Create account

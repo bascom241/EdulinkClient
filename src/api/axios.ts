@@ -6,11 +6,15 @@ import {
   saveAuthSession,
 } from "../features/auth/utils/authToken";
 
-const baseURL =    "https://edlinkserver.onrender.com/api/v1";
-const localUrl = "http://localhost:3000/api/v1 "
-console.log(localUrl, baseURL)
+const baseURL =
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.PROD
+    ? "https://edlinkserver.onrender.com/api/v1"
+    : "http://localhost:5000/api/v1");
+
 const axiosInstance = axios.create({
-  baseURL
+  baseURL,
+  timeout: 20000,
 });
 
 const publicUrls = [
@@ -122,9 +126,7 @@ axiosInstance.interceptors.response.use(
           return Promise.reject(error);
         }
 
-        const res = await axios.post(`${baseURL}/auth/refresh`, {
-          refreshToken,
-        });
+        const res = await axios.post(`${baseURL}/auth/refresh`, { refreshToken });
 
         const newAccessToken = res.data.data.accessToken;
         const newRefreshToken = res.data.data.refreshToken;

@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useGetStudentClassTimeTable, useGetStudentClassrooms } from "../../../features/classroom/hooks/useStudent";
 
 const formatDateTime = (date?: string) => {
@@ -27,10 +28,10 @@ const ScheduleBlock = ({ classId, className }: { classId: string; className: str
                 <h3 className="font-medium text-gray-900">{session.topic}</h3>
                 <p className="text-sm text-gray-500">{formatDateTime(session.startTime)} to {formatDateTime(session.endTime)}</p>
               </div>
-              {data?.defaultLink && (
-                <a href={data.defaultLink} target="_blank" rel="noreferrer" className="w-fit rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white">
-                  Join
-                </a>
+              {session.activeSessionId && (
+                <Link to={`/dashboard/live/${session.activeSessionId}`} className="w-fit rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white">
+                  Join live
+                </Link>
               )}
             </div>
           ))}

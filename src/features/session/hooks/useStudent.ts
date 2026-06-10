@@ -1,5 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
-import { checkInSession, checkOutSession } from "../api/student";
+import { checkInSession, checkOutSession, joinSession } from "../api/student";
+
+export const useJoinSession = () => {
+  return useMutation({
+    mutationFn: joinSession,
+  });
+};
 
 export const useCheckInSession = () => {
   return useMutation({

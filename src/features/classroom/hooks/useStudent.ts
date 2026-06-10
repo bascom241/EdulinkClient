@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { classroomKeys } from "../classroomKeys";
 import { useMutation } from "@tanstack/react-query";
-import { getStudentClassrooms, getStudentClassTimeTable, getStudentMarketplace, joinMarketplaceClass } from "../api/student";
+import { getPublicClassroom, getStudentClassrooms, getStudentClassTimeTable, getStudentMarketplace, joinMarketplaceClass } from "../api/student";
 
 export const useGetStudentClassrooms = () => {
   return useQuery({
@@ -34,5 +34,13 @@ export const useGetStudentMarketplace = (params: {
 export const useJoinMarketplaceClass = () => {
   return useMutation({
     mutationFn: joinMarketplaceClass,
+  });
+};
+
+export const useGetPublicClassroom = (classId: string) => {
+  return useQuery({
+    queryKey: [...classroomKeys.all, "public", classId],
+    queryFn: () => getPublicClassroom(classId),
+    enabled: !!classId,
   });
 };

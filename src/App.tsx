@@ -35,6 +35,9 @@ import StudentGrades from "./pages/dashboard/student/StudentGrades";
 import StudentAttendance from "./pages/dashboard/student/StudentAttendance";
 import StudentMaterials from "./pages/dashboard/student/StudentMaterials";
 import StudentMarketplace from "./pages/dashboard/student/StudentMarketplace";
+import StudentClassDetail from "./pages/dashboard/student/StudentClassDetail";
+import PublicClassPage from "./pages/public/PublicClassPage";
+import PaymentCallback from "./pages/payment/PaymentCallback";
 
 function App() {
   return (
@@ -49,6 +52,8 @@ function App() {
         <Route path="/veify-login" element={<VeryLogin />} />
         <Route path="/select" element={<Select />} />
         <Route path="/teacher-profile" element={<RegisterTeacherProfileForm />} />
+        <Route path="/classes/:classId" element={<PublicClassPage />} />
+        <Route path="/payment/callback" element={<PaymentCallback />} />
         
       
 
@@ -72,6 +77,7 @@ function App() {
               <Route path="student/marketplace" element={<StudentMarketplace />} />
               <Route path="student/join-room" element={<StudentJoinClass />} />
               <Route path="student/my-classes" element={<StudentClasses />} />
+              <Route path="student/my-classes/:classId" element={<StudentClassDetail />} />
               <Route path="student/assignments" element={<StudentAssignments />} />
               <Route path="student/schedule" element={<StudentSchedule />} />
               <Route path="student/grades" element={<StudentGrades />} />

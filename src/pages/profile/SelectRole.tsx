@@ -1,7 +1,7 @@
 import { useUpdateRole } from "../../features/profile/hooks/useUpdateRole";
 import { useAuthStore } from "../../features/auth/store/useAuthStore";
 import type { UpdateRole } from "../../types/userType";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { showCustomToast } from "../../utils/toast";
 import { getAccessToken, saveAuthSession } from "../../features/auth/utils/authToken";
 
@@ -9,6 +9,7 @@ const Select = () => {
   const { role, setRole } = useAuthStore();
   const { mutate, isPending } = useUpdateRole();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const handleSelect = (selectedRole: "ROLE_USER" | "ROLE_TEACHER") => {
     setRole(selectedRole);
@@ -36,7 +37,7 @@ const Select = () => {
         }
 
         if (role === "ROLE_USER") {
-          navigate("/dashboard/student");
+          navigate(searchParams.get("redirect") || "/dashboard/student");
         } else {
           navigate("/teacher-profile");
         }

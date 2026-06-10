@@ -31,8 +31,8 @@ const BottomTabBar: React.FC<BottomTabBarProps> = ({
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg shadow-lg border-t border-gray-200 z-40">
-      <div className="flex justify-around items-center px-2 py-2 max-w-md mx-auto">
+    <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-gray-200 bg-white/95 shadow-lg backdrop-blur-lg">
+      <div className="mx-auto flex max-w-md items-center gap-1 overflow-x-auto px-2 py-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {mainTabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = isActiveTab(tab);
@@ -41,7 +41,7 @@ const BottomTabBar: React.FC<BottomTabBarProps> = ({
             <button
               key={tab.path}
               onClick={() => onTabClick(tab.path)}
-              className={`flex flex-col items-center justify-center py-2 px-3 rounded-xl transition-all duration-200 relative ${
+              className={`relative flex min-w-[68px] shrink-0 flex-col items-center justify-center rounded-xl px-3 py-2 transition-all duration-200 ${
                 isActive ? 'text-green-600' : 'text-gray-500 hover:text-green-500'
               }`}
             >
@@ -63,7 +63,7 @@ const BottomTabBar: React.FC<BottomTabBarProps> = ({
         {/* More Button */}
         <button
           onClick={onMoreClick}
-          className={`flex flex-col items-center justify-center py-2 px-3 rounded-xl transition-all duration-200 ${
+          className={`flex min-w-[68px] shrink-0 flex-col items-center justify-center rounded-xl px-3 py-2 transition-all duration-200 ${
             isMoreOpen ? 'text-green-600' : 'text-gray-500 hover:text-green-500'
           }`}
         >

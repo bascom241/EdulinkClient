@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import type { Classroom } from "../../../types/classroomTypes";
+import { ClassLocation } from "../../../types/classroomTypes";
 import { useClassroomForm } from "../../../features/classroom/hooks/useClassroomForm";
 import {
   useCreateClassroom,
@@ -79,7 +80,7 @@ const MyClass = () => {
 
     // OPTIONAL VALIDATION
     if (
-      formData.location === "ONLINE" &&
+      formData.location === ClassLocation.ONLINE &&
       !formData.defaultLink
     ) {
       toast.error(
@@ -90,7 +91,15 @@ const MyClass = () => {
     }
 
     if (
-      formData.location === "PHYSICAL" &&
+      formData.location === ClassLocation.ONLINE &&
+      !/^https:\/\/meet\.google\.com\/[a-z0-9-]+/i.test(formData.defaultLink.trim())
+    ) {
+      toast.error("Please provide a valid Google Meet link");
+      return;
+    }
+
+    if (
+      formData.location === ClassLocation.PHYSICAL &&
       !formData.physicalAddress
     ) {
       toast.error(
@@ -145,6 +154,7 @@ const MyClass = () => {
     topic: string;
     startTime: string;
     endTime: string;
+    liveRoomUrl?: string;
   }) => {
     await createTimeTable.mutateAsync(data);
 
@@ -254,12 +264,13 @@ const MyClass = () => {
       classroom._id?.toLowerCase().includes(query);
 
     const location = classroom.location?.toLowerCase();
+    const normalizedLocation = location === "onsite" ? ClassLocation.ONLINE : location;
     const price = Number(classroom.price || 0);
     const students = classroom.students?.length || 0;
     const capacity = Number(classroom.maximumStudent || 0);
     const matchesFilter =
       filterValue === "all" ||
-      filterValue === location ||
+      filterValue === normalizedLocation ||
       (filterValue === "free" && price === 0) ||
       (filterValue === "paid" && price > 0) ||
       (filterValue === "full" && capacity > 0 && students >= capacity);

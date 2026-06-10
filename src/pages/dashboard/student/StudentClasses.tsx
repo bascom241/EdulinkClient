@@ -1,6 +1,8 @@
+import { useNavigate } from "react-router-dom";
 import { useGetStudentClassrooms } from "../../../features/classroom/hooks/useStudent";
 
 const StudentClasses = () => {
+  const navigate = useNavigate();
   const { data: classrooms = [], isLoading } = useGetStudentClassrooms();
 
   if (isLoading) return <div className="p-6 text-gray-500">Loading classes...</div>;
@@ -14,7 +16,11 @@ const StudentClasses = () => {
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {classrooms.map((classroom) => (
-          <article key={classroom._id} className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+          <article
+            key={classroom._id}
+            onClick={() => navigate(`/dashboard/student/my-classes/${classroom._id}`)}
+            className="cursor-pointer rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:border-green-200 hover:shadow-md"
+          >
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h2 className="text-lg font-semibold text-gray-900">{classroom.name}</h2>

@@ -12,12 +12,13 @@ import { saveAuthSession } from "../../features/auth/utils/authToken"
 
 import { useRegister } from "../../features/auth/hooks/useRegister"
 import { useRegisterStore } from "../../features/auth/store/registerStore"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useSearchParams } from "react-router-dom"
 const Register = () => {
 
     const { formData, setFormData, resetForm, setToken } = useRegisterStore()
     const [agree, setAgree] = useState(false)
     const navigate = useNavigate()
+    const [searchParams] = useSearchParams()
     const { mutate, isPending } = useRegister()
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
@@ -37,7 +38,8 @@ const Register = () => {
                 }
                 const successMessage = data?.message || "Registration successful!";
                 showCustomToast("success", successMessage);
-                navigate("/select")
+                const redirect = searchParams.get("redirect")
+                navigate(redirect ? `/select?redirect=${encodeURIComponent(redirect)}` : "/select")
                 resetForm()
 
             },
@@ -141,7 +143,10 @@ const Register = () => {
                         {isPending ? "Loading..." : " Sign Up"}
                     </Button>
                     <button
-                        onClick={() => navigate("/login")}
+                        onClick={() => {
+                            const redirect = searchParams.get("redirect")
+                            navigate(redirect ? `/login?redirect=${encodeURIComponent(redirect)}` : "/login")
+                        }}
                         className="text-sm text-[#15803D] hover:text-[#22C55E] font-medium transition-colors duration-200 hover:underline underline-offset-2"
                     >
                         Already Have an accout? Login

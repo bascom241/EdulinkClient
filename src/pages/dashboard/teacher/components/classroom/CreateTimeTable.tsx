@@ -9,6 +9,7 @@ type SessionTimeTableRequest = {
   startTime: string;
   endTime: string;
   topic: string;
+  liveRoomUrl?: string;
 };
 
 type Props = {
@@ -25,6 +26,7 @@ const CreateTimeTable = ({ isOpen, onClose, selectedClass, onSubmit, isPending }
     startTime: "",
     endTime: "",
     topic: "",
+    liveRoomUrl: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -66,11 +68,21 @@ const CreateTimeTable = ({ isOpen, onClose, selectedClass, onSubmit, isPending }
       toast.error("Please select a class");
       return;
     }
+    if (
+      formData.liveRoomUrl &&
+      !/^https:\/\/meet\.google\.com\/[a-z0-9-]+/i.test(formData.liveRoomUrl.trim())
+    ) {
+      toast.error("Please enter a valid Google Meet link");
+      return;
+    }
 
     setIsSubmitting(true);
     try {
       if (onSubmit) {
-        await onSubmit(formData);
+        await onSubmit({
+          ...formData,
+          liveRoomUrl: formData.liveRoomUrl?.trim() || undefined,
+        });
       }
       toast.success("Session added successfully");
       onClose();
@@ -79,6 +91,7 @@ const CreateTimeTable = ({ isOpen, onClose, selectedClass, onSubmit, isPending }
         startTime: "",
         endTime: "",
         topic: "",
+        liveRoomUrl: "",
       });
     } catch (error: any) {
       toast.error(getApiErrorMessage(error, "Failed to add session"));
@@ -169,6 +182,23 @@ const CreateTimeTable = ({ isOpen, onClose, selectedClass, onSubmit, isPending }
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                       required
                     />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Google Meet Link
+                    </label>
+                    <input
+                      type="url"
+                      name="liveRoomUrl"
+                      value={formData.liveRoomUrl || ""}
+                      onChange={handleInputChange}
+                      placeholder={selectedClass?.defaultLink || "https://meet.google.com/..."}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    />
+                    <p className="mt-1 text-xs text-gray-500">
+                      Optional. Leave empty to use the class default Google Meet link.
+                    </p>
                   </div>
 
                   <div className="flex gap-3 pt-4">

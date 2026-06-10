@@ -6,7 +6,8 @@ export interface getStudentNumbers {
 export const ClassLocation = {
   HYBRID: "hybrid",
   PHYSICAL: "physical",
-  ONLINE: "onsite",
+  ONLINE: "online",
+  ONSITE: "onsite",
 } as const;
 
 export const ClassLevel = {
@@ -73,12 +74,15 @@ export interface Student {
 export interface Session {
   _id?: string;
   id?: string;
+  sessionId?: string;
   topic?: string;
   startTime: string;
   endTime: string;
   sessionStatus?: 'ongoing' | 'active' | 'completed' | 'scheduled';
   students?: Student[];
   isCompleted?: boolean;
+  liveRoomUrl?: string;
+  activeSessionId?: string;
 }
 
 export interface TimeTableItem {
@@ -86,6 +90,8 @@ export interface TimeTableItem {
   topic: string;
   startTime: string;
   endTime: string;
+  liveRoomUrl?: string;
+  activeSessionId?: string;
   isCompleted?: boolean;
 }
 

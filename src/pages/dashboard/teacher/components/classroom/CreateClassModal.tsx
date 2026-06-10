@@ -1,5 +1,6 @@
 // components/CreateClassModal.tsx
 import Input from "../../../../../components/ui/Input";
+import { ClassLocation } from "../../../../../types/classroomTypes";
 
 type Props = {
   isOpen: boolean;
@@ -154,11 +155,11 @@ const CreateClassModal = ({
                 onChange={handleInputChange}
                 className="w-full border border-gray-200 rounded-xl p-3 outline-none"
               >
-                <option value="ONLINE">
+                <option value={ClassLocation.ONLINE}>
                   Online
                 </option>
 
-                <option value="PHYSICAL">
+                <option value={ClassLocation.PHYSICAL}>
                   Physical
                 </option>
               </select>
@@ -181,7 +182,7 @@ const CreateClassModal = ({
           </div>
 
           {/* ONLINE SECTION */}
-          {formData.location === "ONLINE" && (
+          {formData.location === ClassLocation.ONLINE && (
             <div className="space-y-4 border rounded-2xl p-4">
               <h3 className="font-semibold text-lg">
                 Online Class Links
@@ -243,7 +244,7 @@ const CreateClassModal = ({
 
           {/* PHYSICAL SECTION */}
           {formData.location ===
-            "PHYSICAL" && (
+            ClassLocation.PHYSICAL && (
             <div className="space-y-4 border rounded-2xl p-4">
               <h3 className="font-semibold text-lg">
                 Physical Location

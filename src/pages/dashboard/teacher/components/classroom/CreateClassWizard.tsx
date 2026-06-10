@@ -340,13 +340,18 @@ const CreateClassWizard = ({
                                                     <div className="flex items-center gap-2">
                                                         <LinkIcon className="h-5 w-5 text-emerald-600" />
                                                         <h3 className="text-lg font-semibold text-gray-900">
-                                                            Online Class Links
+                                                            Online Class Link
                                                         </h3>
                                                     </div>
+                                                    <p className="text-sm leading-6 text-gray-600">
+                                                        Add one Google Meet link for this class. EduLink will reuse it as
+                                                        the default link whenever you start a live session, so students
+                                                        get a consistent join experience.
+                                                    </p>
 
                                                     <div>
                                                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                                                            Main Meeting Link <span className="text-red-500">*</span>
+                                                            Google Meet Link <span className="text-red-500">*</span>
                                                         </label>
                                                         <Input
                                                             type="text"

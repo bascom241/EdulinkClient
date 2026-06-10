@@ -53,6 +53,7 @@ const LoginPage: React.FC = () => {
           }
         },
         onError: (error: any) => {
+          console.log(error)
           setServerError(error.response?.data?.message || 'Login failed. Please try again.')
         },
       }

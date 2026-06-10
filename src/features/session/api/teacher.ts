@@ -17,6 +17,11 @@ export const getSingleSession = async (sessionId: string) => {
     return response.data.data;
 }
 
+export const getLiveSessionAccess = async (sessionId: string) => {
+    const response = await axiosInstance.get(`/session/${sessionId}/live-access`);
+    return response.data.data;
+}
+
 export const getSessionAttendance = async (sessionId: string) => {
     const response = await axiosInstance.get(`/session/${sessionId}/attendance`);
     return response.data.data;

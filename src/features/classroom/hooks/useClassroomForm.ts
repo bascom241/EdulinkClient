@@ -1,5 +1,8 @@
 // hooks/useClassroomForm.ts
 import { useState } from "react";
+import { ClassLocation } from "../../../types/classroomTypes";
+
+type ClassLocationValue = (typeof ClassLocation)[keyof typeof ClassLocation];
 
 export const initialFormData = {
   name: "",
@@ -13,15 +16,14 @@ export const initialFormData = {
 
   classLevel: "",
 
-  // ONLINE | PHYSICAL
-  location: "ONLINE",
+  location: ClassLocation.ONLINE as ClassLocationValue,
 
   category: "",
   level: "BEGINNER",
 
   // ONLINE LINKS
   defaultLink: "",
-  otherLinks: [""],
+  otherLinks: [] as string[],
 
   // PHYSICAL LOCATION
   physicalAddress: "",

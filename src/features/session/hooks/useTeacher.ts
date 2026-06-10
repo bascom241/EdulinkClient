@@ -1,7 +1,7 @@
 // features/session/hooks/useTeacher.js
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { sessionKeys } from "../sessionKeys"
-import { createSession, getSessionAttendance, getSessions, getSingleSession, gradeSessionAttendance } from "../api/teacher"
+import { createSession, getLiveSessionAccess, getSessionAttendance, getSessions, getSingleSession, gradeSessionAttendance } from "../api/teacher"
 
 
 export const useGetAllSessionForTeachers = (classId: string) => {
@@ -37,6 +37,14 @@ export const useGetSingleSession = (sessionId: string) => {
     return useQuery({
         queryKey: sessionKeys.detail(sessionId),
         queryFn: () => getSingleSession(sessionId),
+        enabled: !!sessionId,
+    });
+};
+
+export const useGetLiveSessionAccess = (sessionId: string) => {
+    return useQuery({
+        queryKey: [...sessionKeys.detail(sessionId), "live-access"],
+        queryFn: () => getLiveSessionAccess(sessionId),
         enabled: !!sessionId,
     });
 };

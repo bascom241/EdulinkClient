@@ -21,7 +21,7 @@ import type { MarketplaceClassroom, SctaBreakdown } from "../../../types/classro
 import { getApiErrorMessage } from "../../../utils/apiError";
 
 const levels = ["", "junior", "intermediate", "expert"];
-const locations = ["", "onsite", "physical", "hybrid"];
+const locations = ["", "online", "physical", "hybrid"];
 
 const breakdownLabels: Array<{ key: keyof SctaBreakdown; label: string; max: number }> = [
   { key: "attendance", label: "Attendance", max: 30 },
