@@ -6,11 +6,7 @@ import {
   saveAuthSession,
 } from "../features/auth/utils/authToken";
 
-const baseURL =
-  import.meta.env.VITE_API_BASE_URL ||
-  (import.meta.env.PROD
-    ? "https://edlinkserver.onrender.com/api/v1"
-    : "http://localhost:5000/api/v1");
+const baseURL = ? "https://edlinkserver.onrender.com/api/v1": "http://localhost:5000/api/v1"
 
 const axiosInstance = axios.create({
   baseURL,
