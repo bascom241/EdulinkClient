@@ -6,7 +6,9 @@ import {
   saveAuthSession,
 } from "../features/auth/utils/authToken";
 
-const baseURL = ? "https://edlinkserver.onrender.com/api/v1": "http://localhost:5000/api/v1"
+const baseURL =  "https://edlinkserver.onrender.com/api/v1"
+const localUrl =  "http://localhost:5000/api/v1"
+console.log(localUrl, baseURL)
 
 const axiosInstance = axios.create({
   baseURL,

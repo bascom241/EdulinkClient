@@ -78,6 +78,12 @@ const ClassSchedule = ({
       return;
     }
 
+    const meetWindow = window.open("about:blank", "_blank");
+    if (!meetWindow) {
+      toast.error("Please allow pop-ups so Google Meet can open");
+      return;
+    }
+
     try {
       const liveSession = await createLive.mutateAsync({
         classroom: classId,
@@ -92,8 +98,11 @@ const ClassSchedule = ({
       queryClient.invalidateQueries({ queryKey: sessionKeys.list(classId) });
       queryClient.invalidateQueries({ queryKey: workspaceKeys.dashboardSummary });
       toast.success("Live class started. Students have been notified.");
+      meetWindow.opener = null;
+      meetWindow.location.href = liveRoomUrl.trim();
       navigate(`/dashboard/live/${liveSession._id}`);
     } catch (error: any) {
+      meetWindow.close();
       toast.error(getApiErrorMessage(error, "Could not start live class"));
     }
   };

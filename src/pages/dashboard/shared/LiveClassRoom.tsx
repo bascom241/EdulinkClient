@@ -129,6 +129,12 @@ const LiveClassRoom = () => {
       return;
     }
 
+    const meetWindow = window.open("about:blank", "_blank");
+    if (!meetWindow) {
+      toast.error("Please allow pop-ups so Google Meet can open");
+      return;
+    }
+
     if (isStudent && sessionId && classId && !checkedInRef.current) {
       try {
         await checkIn.mutateAsync({ sessionId, classId });
@@ -138,16 +144,14 @@ const LiveClassRoom = () => {
         queryClient.invalidateQueries({ queryKey: workspaceKeys.dashboardSummary });
         queryClient.invalidateQueries({ queryKey: workspaceKeys.grades });
       } catch (error: any) {
+        meetWindow.close();
         toast.error(getApiErrorMessage(error, "Could not record attendance"));
         return;
       }
     }
 
-    const meetWindow = window.open(liveRoomUrl, "_blank", "noopener,noreferrer");
-    if (!meetWindow) {
-      toast.error("Please allow pop-ups so Google Meet can open");
-      return;
-    }
+    meetWindow.opener = null;
+    meetWindow.location.href = liveRoomUrl;
     setHasOpenedMeet(true);
   };
 
@@ -228,14 +232,14 @@ const LiveClassRoom = () => {
             <button
               type="button"
               onClick={handleJoinGoogleMeet}
-              disabled={checkIn.isPending || !liveRoomUrl || (isStudent && isCheckedIn)}
+              disabled={checkIn.isPending || !liveRoomUrl}
               className="inline-flex w-fit items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
             >
               <HiOutlineExternalLink />
               {checkIn.isPending
                 ? "Recording attendance..."
                 : isStudent && isCheckedIn
-                ? "Joined and tracking"
+                ? "Open Google Meet"
                 : "Join Google Meet"}
             </button>
           </div>
